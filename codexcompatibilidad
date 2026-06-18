@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Códice de las Afinidades — Casa Selymna</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Spectral:ital,wght@0,300;0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d1018;
+    --ink-2:#141925;
+    --ink-3:#1c2331;
+    --line:#2b3447;
+    --parch:#e9e3d2;
+    --parch-dim:#a9a594;
+    --gold:#c9a24b;
+    --gold-soft:#d8be84;
+    --jade:#6fa893;
+    --rust:#c2674a;
+    --amethyst:#9b7fb8;
+    --halo: rgba(201,162,75,.14);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(120% 80% at 50% -10%, #161c2a 0%, var(--ink) 55%) fixed,
+      var(--ink);
+    color:var(--parch);
+    font-family:'Spectral',Georgia,serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    padding:clamp(16px,4vw,40px) clamp(14px,4vw,32px) 64px;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+
+  header{text-align:center;padding:8px 0 26px;position:relative}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:.42em;text-transform:uppercase;
+    color:var(--gold);opacity:.85;margin:0 0 18px;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:500;font-optical-sizing:auto;
+    font-size:clamp(2.4rem,7vw,4.4rem);line-height:.95;margin:0;
+    letter-spacing:-.01em;
+  }
+  h1 em{font-style:italic;color:var(--gold-soft);font-weight:400}
+  .sub{
+    font-family:'Spectral',serif;font-style:italic;font-weight:300;
+    font-size:clamp(1rem,2.4vw,1.22rem);color:var(--parch-dim);
+    margin:14px auto 0;max-width:38ch;
+  }
+  .rule{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:30px 0}
+
+  .pickers{display:grid;gap:18px;grid-template-columns:1fr 1fr}
+  @media(max-width:640px){.pickers{grid-template-columns:1fr}}
+  .picker .plabel{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--parch-dim);margin:0 0 10px;display:block;
+  }
+  .picker .plabel b{color:var(--gold);font-weight:500}
+  .rail{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+  .glyph{
+    aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2px;border:1px solid var(--line);border-radius:9px;background:var(--ink-2);
+    color:var(--parch-dim);cursor:pointer;transition:.18s ease;font-size:20px;
+    line-height:1;-webkit-tap-highlight-color:transparent;
+  }
+  .glyph small{font-family:'IBM Plex Mono',monospace;font-size:7.5px;letter-spacing:.04em;opacity:.7}
+  .glyph:hover{border-color:var(--gold);color:var(--parch)}
+  .glyph:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .picker[data-slot="a"] .glyph.sel{background:rgba(201,162,75,.16);border-color:var(--gold);color:var(--gold-soft);box-shadow:0 0 0 1px var(--gold) inset}
+  .picker[data-slot="b"] .glyph.sel{background:rgba(155,127,184,.16);border-color:var(--amethyst);color:#cdb8e0;box-shadow:0 0 0 1px var(--amethyst) inset}
+
+  .reading{display:grid;grid-template-columns:300px 1fr;gap:clamp(20px,4vw,40px);align-items:start;margin-top:8px}
+  @media(max-width:760px){.reading{grid-template-columns:1fr}}
+
+  .wheelbox{position:relative}
+  .wheel{width:100%;height:auto;display:block}
+  .wheel-cap{
+    text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;
+    letter-spacing:.2em;text-transform:uppercase;color:var(--parch-dim);margin-top:8px;
+  }
+
+  .panel h2{
+    font-family:'Fraunces',serif;font-weight:500;font-size:clamp(1.7rem,4.6vw,2.5rem);
+    margin:0;line-height:1.04;letter-spacing:-.01em;
+  }
+  .panel h2 .x{color:var(--gold);font-style:italic;font-weight:400;padding:0 .28em}
+  .meta{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 4px}
+  .chip{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;
+    border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--parch-dim);
+    background:var(--ink-2);
+  }
+  .chip b{color:var(--parch);font-weight:500}
+
+  .score{display:flex;align-items:baseline;gap:14px;margin:22px 0 4px}
+  .score .num{font-family:'Fraunces',serif;font-size:3.2rem;line-height:1;font-weight:500}
+  .score .of{font-family:'IBM Plex Mono',monospace;font-size:.9rem;color:var(--parch-dim)}
+  .score .verdict-word{font-family:'Spectral',serif;font-style:italic;font-size:1.05rem}
+  .bar{height:6px;border-radius:6px;background:var(--ink-3);overflow:hidden;margin:14px 0 26px;border:1px solid var(--line)}
+  .bar i{display:block;height:100%;border-radius:6px;transition:width .5s cubic-bezier(.4,0,.1,1),background .4s}
+
+  .seg{margin:0 0 20px}
+  .seg .stag{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.26em;text-transform:uppercase;
+    display:flex;align-items:center;gap:9px;margin:0 0 7px;color:var(--parch-dim);
+  }
+  .seg .stag::before{content:"";width:18px;height:1px;background:currentColor;opacity:.6}
+  .seg.forces .stag{color:var(--jade)}
+  .seg.tensions .stag{color:var(--rust)}
+  .seg.verdict .stag{color:var(--gold)}
+  .seg p{margin:0;font-size:1.04rem}
+  .seg.verdict p{font-style:italic;font-size:1.12rem;color:var(--gold-soft);line-height:1.5}
+
+  .matrix-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+  .matrix-head h3{font-family:'Fraunces',serif;font-weight:500;font-size:1.5rem;margin:0}
+  .legend{display:flex;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.04em;color:var(--parch-dim);flex-wrap:wrap}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .mtable{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{border-collapse:collapse;width:100%;min-width:560px}
+  th,td{text-align:center;padding:0;border:1px solid var(--ink)}
+  thead th, .rowh{
+    font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--parch-dim);
+    background:var(--ink-2);width:34px;height:34px;font-weight:400;
+  }
+  thead th:first-child{background:transparent;border:none}
+  td.cell{cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#0d1018;
+    height:34px;transition:.12s;position:relative;font-weight:500}
+  td.cell:hover{outline:2px solid var(--gold);outline-offset:-2px;z-index:2}
+  td.cell.active{outline:2px solid var(--parch);outline-offset:-2px;z-index:3}
+
+  footer{margin-top:40px;text-align:center;font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--parch-dim);opacity:.7}
+
+  @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Casa Selymna</p>
+    <h1>El Códice<br>de las <em>Afinidades</em></h1>
+    <p class="sub">Guía de compatibilidad amorosa de los doce signos</p>
+  </header>
+
+  <div class="rule"></div>
+
+  <section class="pickers" aria-label="Elección de los signos">
+    <div class="picker" data-slot="a">
+      <span class="plabel">Primer signo — <b id="nameA"></b></span>
+      <div class="rail" id="railA"></div>
+    </div>
+    <div class="picker" data-slot="b">
+      <span class="plabel">Segundo signo — <b id="nameB"></b></span>
+      <div class="rail" id="railB"></div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <section class="reading">
+    <div class="wheelbox">
+      <svg class="wheel" id="wheel" viewBox="0 0 320 320" role="img" aria-label="Rueda zodiacal y aspecto"></svg>
+      <p class="wheel-cap" id="aspectCap"></p>
+    </div>
+
+    <div class="panel">
+      <h2 id="title"></h2>
+      <div class="meta" id="meta"></div>
+
+      <div class="score">
+        <span class="num" id="scoreNum"></span>
+        <span class="of">/ 100</span>
+        <span class="verdict-word" id="tier"></span>
+      </div>
+      <div class="bar"><i id="barFill"></i></div>
+
+      <div class="seg forces">
+        <p class="stag">Las fortalezas</p>
+        <p id="forces"></p>
+      </div>
+      <div class="seg tensions">
+        <p class="stag">Las tensiones</p>
+        <p id="tensions"></p>
+      </div>
+      <div class="seg verdict">
+        <p class="stag">El veredicto de Selymna</p>
+        <p id="verdict"></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <section aria-label="Mapa de conjunto">
+    <div class="matrix-head">
+      <h3>El mapa de conjunto</h3>
+      <div class="legend">
+        <span><i style="background:var(--jade)"></i> Armonía · 82+</span>
+        <span><i style="background:var(--gold)"></i> Magnetismo · 66–81</span>
+        <span><i style="background:var(--amethyst)"></i> Contraste · 58–65</span>
+        <span><i style="background:var(--rust)"></i> Desafío · &lt;58</span>
+      </div>
+    </div>
+    <div class="mtable">
+      <table id="matrix"><thead></thead><tbody></tbody></table>
+    </div>
+  </section>
+
+  <footer>Selymna · Casa Selymna — Códice de las Afinidades</footer>
+</div>
+
+<script>
+/* ----------------------------------------------------------
+   DATOS — los doce signos
+---------------------------------------------------------- */
+const SIGNS = [
+  {n:"Aries",      g:"♈", el:"Fuego",  mo:"Cardinal", pl:"Marte",    d:"21 mar – 19 abr"},
+  {n:"Tauro",      g:"♉", el:"Tierra", mo:"Fijo",     pl:"Venus",    d:"20 abr – 20 may"},
+  {n:"Géminis",    g:"♊", el:"Aire",   mo:"Mutable",  pl:"Mercurio", d:"21 may – 20 jun"},
+  {n:"Cáncer",     g:"♋", el:"Agua",   mo:"Cardinal", pl:"Luna",     d:"21 jun – 22 jul"},
+  {n:"Leo",        g:"♌", el:"Fuego",  mo:"Fijo",     pl:"Sol",      d:"23 jul – 22 ago"},
+  {n:"Virgo",      g:"♍", el:"Tierra", mo:"Mutable",  pl:"Mercurio", d:"23 ago – 22 sep"},
+  {n:"Libra",      g:"♎", el:"Aire",   mo:"Cardinal", pl:"Venus",    d:"23 sep – 22 oct"},
+  {n:"Escorpio",   g:"♏", el:"Agua",   mo:"Fijo",     pl:"Plutón",   d:"23 oct – 21 nov"},
+  {n:"Sagitario",  g:"♐", el:"Fuego",  mo:"Mutable",  pl:"Júpiter",  d:"22 nov – 21 dic"},
+  {n:"Capricornio",g:"♑", el:"Tierra", mo:"Cardinal", pl:"Saturno",  d:"22 dic – 19 ene"},
+  {n:"Acuario",    g:"♒", el:"Aire",   mo:"Fijo",     pl:"Urano",    d:"20 ene – 18 feb"},
+  {n:"Piscis",     g:"♓", el:"Agua",   mo:"Mutable",  pl:"Neptuno",  d:"19 feb – 20 mar"},
+];
+
+const ASPECTS = ["Conjunción","Semisextil","Sextil","Cuadratura","Trígono","Quincuncio","Oposición"];
+
+/* ----------------------------------------------------------
+   LECTURAS — clave "min-max" (índices 0..11)
+---------------------------------------------------------- */
+const R = {
+ // espejos (conjunción)
+ "0-0":{s:78,f:"Dos Aries se reconocen al instante: el mismo ímpetu, la misma franqueza, la misma sed de conquista. La pasión es inmediata y el ritmo, eléctrico.",t:"Dos jefes sin ejército: el orgullo y la impaciencia convierten el menor desacuerdo en un duelo.",v:"Un fuego magnífico, mientras ninguno intente apagar el del otro."},
+ "1-1":{s:80,f:"Una sensualidad tranquila y un gusto compartido por el confort, la mesa y lo que perdura. Aquí se construye un nido sólido y fiel.",t:"Dos terquedades que no ceden: la rutina se instala y la inercia adormece el deseo.",v:"La pareja más estable del zodiaco: solo cuídense del sueño de la costumbre."},
+ "2-2":{s:72,f:"La conversación no se detiene nunca: curiosidad, juegos de ingenio, ligereza. Se divierten como dos cómplices.",t:"Todo es mental, nada se asienta; el compromiso se evapora a la primera corriente de aire.",v:"Brillante y chispeante, pero este dúo todavía busca su ancla."},
+ "3-3":{s:76,f:"Una intimidad rara: se adivinan, se protegen, construyen un hogar donde el otro por fin se siente seguro.",t:"Dos sensibilidades a flor de piel; los humores se contagian y los rencores se enquistan.",v:"Un refugio tierno que debe aprender a abrir sus ventanas."},
+ "4-4":{s:74,f:"Dos soles, dos escenarios, una generosidad flamante. La pareja irradia y adora ser admirada.",t:"Un solo trono para dos reyes: el orgullo herido se vuelve drama enseguida.",v:"Grandioso, mientras cada uno aplauda al otro en vez de reclamar la luz."},
+ "5-5":{s:75,f:"Atención constante, devoción real, una cotidianidad cuidada con esmero: uno se siente comprendido en los detalles.",t:"La crítica mutua y la ansiedad giran en bucle; lo mejor se vuelve enemigo de lo bueno.",v:"Un amor meticuloso que debe permitirse la imperfección."},
+ "6-6":{s:77,f:"Elegancia, cortesía, búsqueda constante de la armonía: todo aquí es gracia y equilibrio.",t:"Dos indecisos que evitan el conflicto hasta no decidir nada; lo no dicho se acumula.",v:"Bello como un espejo: solo falta atreverse a mostrar las grietas."},
+ "7-7":{s:79,f:"Una fusión total, sin medias tintas: pasión, lealtad, profundidad. Se entregan en cuerpo y alma.",t:"Celos, control, juegos de poder: dos intensidades que pueden autodestruirse.",v:"Todo o nada: sublime o volcánico, jamás tibio."},
+ "8-8":{s:78,f:"Sed de aventura compartida, optimismo contagioso, libertad respetada. Exploran el mundo lado a lado.",t:"Nadie sostiene el timón; las promesas vuelan y el compromiso huye.",v:"Una hermosa travesía que debe elegir un rumbo común."},
+ "9-9":{s:76,f:"Ambición, disciplina, respeto mutuo: una pareja que construye una dinastía piedra tras piedra.",t:"El trabajo devora al corazón; el pudor y la frialdad congelan la ternura.",v:"Una alianza temiblemente sólida que debe reaprender a jugar."},
+ "10-10":{s:75,f:"Libertad absoluta, ideas en ebullición, amistad amorosa: dos espíritus que inventan sus propias reglas.",t:"Dos satélites demasiado independientes; la intimidad emocional se mantiene a distancia.",v:"Una complicidad de vanguardia que debe atreverse a bajar del cielo."},
+ "11-11":{s:74,f:"Una ternura oceánica, una empatía sin palabras, un mundo imaginario para dos.",t:"Sin fronteras, sin piloto: se ahogan en los sueños y las ilusiones.",v:"Un sueño magnífico que reclama un poco de tierra firme."},
+ // Aries
+ "0-1":{s:58,f:"El imán Marte-Venus opera: Aries conquista, Tauro saborea. Una atracción sensual innegable.",t:"Uno acelera, el otro modera; la impaciencia del fuego choca con la lentitud de la tierra.",v:"Deseo real, ritmos opuestos: habrá que negociar el tempo."},
+ "0-2":{s:84,f:"El fuego y el aire se encienden: energía, humor, espontaneidad. Nunca hay aburrimiento.",t:"Dos cabezas inquietas que se distraen rápido; la profundidad a veces queda fuera.",v:"Un dúo ágil y juguetón, ideal para quien ama lo imprevisto."},
+ "0-3":{s:56,f:"Aries protege, Cáncer se apega: una tensión que puede volverse apasionada.",t:"La brusquedad del fuego hiere la sensibilidad del agua; uno avanza, el otro se repliega.",v:"Atracción de contrarios que exige mucha dulzura del guerrero."},
+ "0-4":{s:90,f:"Dos llamas cómplices: pasión, orgullo, generosidad. Una pareja solar que impone.",t:"Dos egos voluminosos; la rivalidad acecha si uno eclipsa al otro.",v:"Uno de los fuegos más bellos del zodiaco: cálido y triunfal."},
+ "0-5":{s:48,f:"Virgo canaliza el ímpetu de Aries; juntos convierten el impulso en realización.",t:"La impulsividad contra la prudencia, el instinto contra la crítica: dos lenguas extranjeras.",v:"Una alquimia difícil que pide traducciones permanentes."},
+ "0-6":{s:82,f:"El eje Yo/Nosotros: el guerrero encuentra a la diplomática. Atracción magnética, complementariedad perfecta.",t:"Uno decide, el otro vacila; el egoísmo choca con la necesidad de agradar.",v:"Los opuestos se imantan: un equilibrio soberbio si se complementan en vez de corregirse."},
+ "0-7":{s:60,f:"Dos guerreros regidos por Marte: deseo ardiente, intensidad física rara.",t:"Aries vive en la superficie, Escorpio en los abismos; la lucha de poder es inevitable.",v:"Una pasión volcánica que coquetea con la guerra."},
+ "0-8":{s:91,f:"Aventura, libertad, optimismo: dos exploradores que se impulsan hacia arriba.",t:"Dos francotiradores que detestan las cadenas; la estabilidad no es lo suyo.",v:"Un fuego alegre y expansivo, uno de los acuerdos más naturales."},
+ "0-9":{s:57,f:"Una ambición multiplicada: Aries abre el camino, Capricornio construye a largo plazo.",t:"Impaciencia contra paciencia, ímpetu contra frialdad: el pulso es permanente.",v:"Cuadratura exigente: puede forjar un imperio o agotarse en fricciones."},
+ "0-10":{s:85,f:"Energía y originalidad: se innova, se divierten, se respeta la libertad del otro.",t:"El fuego reclama calor, el aire se queda cerebral: la emoción puede faltar.",v:"Un dúo eléctrico y moderno, cómplices ante todo."},
+ "0-11":{s:54,f:"Aries protege a Piscis, Piscis suaviza a Aries: una ternura real.",t:"El guerrero y el soñador no habitan el mismo mundo; ritmos y necesidades divergen.",v:"Un encuentro conmovedor que pide mucha paciencia mutua."},
+ // Tauro
+ "1-2":{s:52,f:"La curiosidad de Géminis divierte a Tauro; uno aporta lo nuevo, el otro la seguridad.",t:"Estabilidad contra movimiento, silencio contra charla: dos temperamentos en las antípodas.",v:"Atracción intrigante, pero con un abismo de ritmo por salvar."},
+ "1-3":{s:87,f:"Ternura, fidelidad, amor al hogar: una pareja que se siente en casa desde la primera noche.",t:"Dos sensibilidades posesivas; enojos y rencores silenciosos.",v:"Un nido acogedor y duradero, uno de los acuerdos más tiernos."},
+ "1-4":{s:60,f:"Dos amantes de lo bello y del lujo; lealtad y sensualidad presentes.",t:"Dos tercos inflexibles: el orgullo de Leo contra la obstinación de Tauro.",v:"Una pasión suntuosa que a menudo se rompe en la terquedad."},
+ "1-5":{s:89,f:"Concreto, fiable, sensual: se construye una cotidianidad sólida donde cada uno se siente útil.",t:"Demasiado pragmatismo a veces apaga la fantasía; la crítica de Virgo incomoda.",v:"Un acuerdo de tierra ejemplar, hecho para durar."},
+ "1-6":{s:55,f:"Venus une a estos dos estetas: gusto por lo bello, el amor, la dulzura.",t:"Tauro posee, Libra mariposea; uno quiere instalarse, el otro seducir.",v:"Una elegancia común frenada por necesidades afectivas opuestas."},
+ "1-7":{s:83,f:"El eje del deseo y la posesión: magnetismo sensual intenso, lealtad a toda prueba.",t:"Dos celosos posesivos; los pulsos silenciosos se eternizan.",v:"Una oposición carnal y fiel, si la confianza resiste."},
+ "1-8":{s:50,f:"Sagitario abre el horizonte de Tauro, Tauro ofrece un puerto a Sagitario.",t:"El sedentario contra el aventurero; uno quiere quedarse, el otro partir.",v:"Dos mundos que se aman de lejos pero conviven mal."},
+ "1-9":{s:90,f:"Ambición, paciencia, lealtad: una pareja que construye una vida sólida y próspera.",t:"El deber antes que el corazón; la rutina puede adormecer la pasión.",v:"Una alianza de tierra poderosa, hecha para durar."},
+ "1-10":{s:53,f:"Acuario electriza a Tauro, Tauro ancla a Acuario: fascinación de los contrarios.",t:"Tradición contra revolución, posesión contra libertad: dos fijos que no ceden.",v:"Cuadratura difícil entre lo arraigado y lo imprevisible."},
+ "1-11":{s:86,f:"Tauro ofrece un refugio concreto al sueño de Piscis: ternura y sensualidad.",t:"El realismo de Tauro a veces choca con el idealismo de Piscis.",v:"Un acuerdo dulce y romántico, tierra y agua que se fecundan."},
+ // Géminis
+ "2-3":{s:53,f:"La ligereza de Géminis distrae a Cáncer, la ternura de Cáncer abriga a Géminis.",t:"La cabeza contra el corazón: uno analiza, el otro siente; las necesidades divergen.",v:"Un afecto sincero que debe conjugar palabras y emociones."},
+ "2-4":{s:85,f:"Leo adora el ingenio de Géminis, Géminis admira el porte de Leo: juego y brillo.",t:"El egocentrismo de Leo soporta mal la versatilidad de Géminis.",v:"Un dúo brillante y juguetón, hecho para lucir en sociedad."},
+ "2-5":{s:58,f:"Dos espíritus regidos por Mercurio: conversaciones infinitas, complicidad intelectual.",t:"El Géminis diletante irrita a la Virgo meticulosa: análisis contra dispersión.",v:"Cuadratura mental estimulante pero nerviosa, entre dos usos de la inteligencia."},
+ "2-6":{s:89,f:"Ligereza, ingenio, sociabilidad: una pareja encantadora, culta, nunca aburrida.",t:"Dos cabezas en las nubes que huyen del conflicto y de las decisiones pesadas.",v:"Un acuerdo de aire delicioso, uno de los más armoniosos del zodiaco."},
+ "2-7":{s:47,f:"Escorpio fascina a Géminis, Géminis divierte a Escorpio: intriga mutua.",t:"La ligereza contra la obsesión, la superficie contra el abismo: incomprensión estructural.",v:"Una atracción turbia que la desconfianza suele devorar."},
+ "2-8":{s:82,f:"El eje del saber: uno colecciona datos, el otro busca el sentido. Curiosidad y libertad compartidas.",t:"Dos inasibles; ni uno ni otro echa el ancla.",v:"Opuestos cómplices y aventureros: ágiles, libres, jamás posesivos."},
+ "2-9":{s:46,f:"Capricornio estructura las ideas de Géminis, Géminis aligera a Capricornio.",t:"Ligereza contra gravedad, juego contra deber: Mercurio y Saturno se hablan poco.",v:"Un acuerdo laborioso entre la mariposa y el constructor."},
+ "2-10":{s:90,f:"Ideas, libertad, originalidad: dos espíritus que se entienden a medias palabras e inventan un mundo.",t:"Todo se queda cerebral; la emoción y el compromiso pueden faltar de carne.",v:"Un acuerdo de aire deslumbrante, intelectual y libre."},
+ "2-11":{s:54,f:"El imaginario de Piscis inspira a Géminis; juntos sueñan y narran.",t:"La lógica contra la intuición, las palabras contra el sentir: malentendidos permanentes.",v:"Cuadratura difusa y poética que cuesta entenderse."},
+ // Cáncer
+ "3-4":{s:56,f:"La Luna y el Sol: Cáncer nutre, Leo abriga. Una ternura protectora.",t:"La necesidad de seguridad contra la de admiración; la susceptibilidad contra el orgullo.",v:"Un apego cálido que debe cuidar dos orgullos."},
+ "3-5":{s:84,f:"Devoción, cuidado, atención a lo cotidiano: una pareja que se cuida mutuamente.",t:"La emotividad de Cáncer se resiente con la crítica de Virgo.",v:"Un acuerdo tierno y fiable, hecho de pequeñas atenciones."},
+ "3-6":{s:55,f:"Dos corazones lunares-venusinos enamorados del amor y la dulzura.",t:"La emoción de Cáncer contra la razón sociable de Libra: uno se enfurruña, el otro huye.",v:"Cuadratura sentimental delicada entre lo íntimo y lo mundano."},
+ "3-7":{s:91,f:"Una profundidad emocional rara: se entienden sin hablar, se protegen, se funden.",t:"Dos hipersensibles que se encierran en sus emociones y sus silencios.",v:"Uno de los acuerdos más intensos y fieles del zodiaco."},
+ "3-8":{s:48,f:"Sagitario amplía el horizonte de Cáncer, Cáncer ofrece un hogar a Sagitario.",t:"La necesidad de nido contra la sed de evasión; el apego contra la libertad.",v:"Dos deseos opuestos que a menudo se hieren pese al afecto."},
+ "3-9":{s:84,f:"El eje hogar/carrera: Cáncer aporta el calor, Capricornio la seguridad. Complementariedad perfecta.",t:"La emoción contra el pudor, lo íntimo contra la ambición; frialdad percibida.",v:"Opuestos que se complementan admirablemente: el corazón y la columna vertebral."},
+ "3-10":{s:46,f:"Acuario abre la mente de Cáncer, Cáncer humaniza a Acuario.",t:"La necesidad de fusión contra la necesidad de distancia; la emoción contra la razón.",v:"Un apego que cuesta, entre el clan y el mar abierto."},
+ "3-11":{s:90,f:"Empatía, romanticismo, intuición: dos almas que se adivinan y se mecen.",t:"Dos seres a flor de piel que pueden hundirse juntos en la melancolía.",v:"Un acuerdo acuático tierno y poético, casi telepático."},
+ // Leo
+ "4-5":{s:54,f:"Virgo sirve y perfecciona, Leo inspira e irradia: bella complementariedad de talentos.",t:"El fasto contra la modestia, el porte contra la crítica: el ego se siente juzgado.",v:"Dos registros opuestos que deben aprender a admirarse."},
+ "4-6":{s:86,f:"Glamour, romance, vida social: una pareja elegante que adora amar y ser vista.",t:"Leo quiere reinar, Libra quiere compartir: vanidad contra diplomacia.",v:"Un acuerdo brillante y seductor, hecho para la belleza."},
+ "4-7":{s:61,f:"Dos voluntades magnéticas: pasión ardiente, deseo poderoso, intensidad rara.",t:"Lucha de poder frontal: el orgullo de Leo contra la posesividad de Escorpio.",v:"Una pasión explosiva, sublime o destructora, jamás tibia."},
+ "4-8":{s:91,f:"Alegría, generosidad, aventura: dos llamas optimistas que celebran la vida.",t:"Leo quiere el centro, Sagitario quiere el más allá: fidelidad a vigilar.",v:"Un acuerdo solar cálido y expansivo, feliz por naturaleza."},
+ "4-9":{s:50,f:"Dos ambiciosos: Leo aporta el porte, Capricornio la estructura y el estatus.",t:"Calor contra frialdad, espectáculo contra discreción; reconocimiento contra deber.",v:"Un tándem de poder que sufre en el terreno del corazón."},
+ "4-10":{s:83,f:"El eje individuo/colectivo: Leo encarna, Acuario libera. Atracción fascinada y original.",t:"El corazón contra la cabeza, la necesidad de amor contra la de espacio.",v:"Opuestos magnéticos: flamante frente a distante, pero irresistible."},
+ "4-11":{s:49,f:"Piscis adora e inspira a Leo, Leo protege e ilumina a Piscis.",t:"La audacia contra la delicadeza: uno brilla, el otro se disuelve.",v:"Una ternura real frenada por naturalezas inconciliables."},
+ // Virgo
+ "5-6":{s:53,f:"Libra suaviza a Virgo, Virgo estructura a Libra: refinamiento compartido.",t:"La crítica contra la necesidad de armonía; el pragmatismo contra la estética.",v:"Una elegancia común que tropieza con prioridades distintas."},
+ "5-7":{s:85,f:"Lealtad, profundidad, exigencia: dos espíritus penetrantes que se respetan y se adivinan.",t:"El análisis frío de Virgo puede chocar con la intensidad de Escorpio.",v:"Un acuerdo poderoso y fiel, lúcido y apasionado."},
+ "5-8":{s:56,f:"Sagitario amplía a Virgo, Virgo precisa a Sagitario: ingenio y saber compartidos.",t:"El detalle contra la gran idea, la prudencia contra el exceso.",v:"Cuadratura mental fértil pero agitada, entre la lupa y el catalejo."},
+ "5-9":{s:89,f:"Trabajo, rigor, fiabilidad: una pareja metódica que construye lo concreto y la confianza.",t:"Demasiada seriedad; la ternura a veces queda después del deber.",v:"Un acuerdo de tierra ejemplar, discreto e indestructible."},
+ "5-10":{s:46,f:"Acuario abre la mente de Virgo, Virgo concreta las ideas de Acuario.",t:"Lo práctico contra lo abstracto, el orden contra la rebeldía: dos lógicas extranjeras.",v:"Un diálogo inteligente pero desafinado."},
+ "5-11":{s:81,f:"El eje orden/devoción: Virgo estructura el sueño de Piscis, Piscis amplía su alma. Complementariedad magnética.",t:"La razón contra la intuición, la crítica contra la sensibilidad.",v:"Opuestos que se sanan: el rigor y la gracia reunidos."},
+ // Libra
+ "6-7":{s:54,f:"El encanto de Libra atrae a Escorpio, la intensidad de Escorpio fascina a Libra.",t:"La ligereza social contra la profundidad obsesiva: superficie contra abismo.",v:"Una fascinación eléctrica acechada por los celos."},
+ "6-8":{s:85,f:"Sociabilidad, optimismo, apertura: una pareja culta que ama salir y explorar.",t:"La necesidad de pareja contra la de libertad: uno quiere unirse, el otro volar.",v:"Un acuerdo ligero y alegre, ideal para espíritus curiosos."},
+ "6-9":{s:55,f:"Libra aporta la gracia, Capricornio la estatura: una pareja que puede impresionar.",t:"El encanto contra la austeridad, la armonía contra la ambición: ritmos opuestos.",v:"Cuadratura exigente entre la esteta y el constructor."},
+ "6-10":{s:90,f:"Ideales, ingenio, sociabilidad: dos almas de aire que piensan el mundo y el amor de otro modo.",t:"Muchas ideas, poco anclaje emocional; la intimidad queda por conquistar.",v:"Un acuerdo de aire luminoso, intelectual y armonioso."},
+ "6-11":{s:50,f:"Dos románticos enamorados de la belleza y la dulzura; sensibilidad compartida.",t:"La razón sociable contra el océano emocional: el equilibrio contra la disolución.",v:"Una ternura esteta frenada por lenguas afectivas distintas."},
+ // Escorpio
+ "7-8":{s:53,f:"Sagitario aligera a Escorpio, Escorpio da profundidad a Sagitario.",t:"La intensidad posesiva contra la libertad despreocupada; el secreto contra la franqueza.",v:"Dos potencias que se atraen pero se controlan mal."},
+ "7-9":{s:86,f:"Ambición, estrategia, lealtad: una pareja de poder, profunda y determinada.",t:"Dos controladores; la frialdad de Capricornio puede frustrar la intensidad de Escorpio.",v:"Un acuerdo temible, intenso y constructor."},
+ "7-10":{s:54,f:"Dos espíritus radicales y magnéticos: fascinación y potencia intelectual.",t:"La fusión emocional contra la libertad distante; posesión contra independencia.",v:"Cuadratura eléctrica entre el abismo y el cielo: sublime o glacial."},
+ "7-11":{s:91,f:"Profundidad, intuición, fusión de almas: se entienden en el silencio y el misterio.",t:"Dos emotivos que pueden perderse en la dependencia o la ilusión.",v:"Uno de los acuerdos más profundos y magnéticos del zodiaco."},
+ // Sagitario
+ "8-9":{s:54,f:"Sagitario abre el horizonte de Capricornio, Capricornio ancla sus visiones.",t:"La libertad contra la estructura, el optimismo contra el realismo: dos tempos opuestos.",v:"Complementariedad posible entre el ímpetu y la disciplina, a fuerza de paciencia."},
+ "8-10":{s:86,f:"Libertad, ideas, aventura: dos independientes que se inspiran y exploran sin frenarse.",t:"Ambos huyen de la rutina y del apego; falta el anclaje.",v:"Un acuerdo libre y estimulante, cómplices ante todo."},
+ "8-11":{s:56,f:"Una búsqueda de sentido compartida: fe, idealismo, generosidad comunes.",t:"La aventura brusca de Sagitario hiere la delicadeza de Piscis; franqueza contra evasión.",v:"Cuadratura tierna y espiritual, pero torpe."},
+ // Capricornio
+ "9-10":{s:53,f:"Dos herederos de Saturno: seriedad, visión a largo plazo, respeto mutuo.",t:"La tradición contra la revolución, la estructura contra la libertad.",v:"Una estima real que cuesta volverse calor."},
+ "9-11":{s:84,f:"Capricornio da forma a los sueños de Piscis, Piscis enternece a Capricornio.",t:"El realismo contra el idealismo: uno calcula, el otro siente.",v:"Un acuerdo complementario y conmovedor: la estructura al servicio del sueño."},
+ // Acuario
+ "10-11":{s:52,f:"Dos idealistas: Acuario piensa la humanidad, Piscis la ama. Una compasión compartida.",t:"El espíritu contra el alma, la distancia contra la fusión: necesidades afectivas inversas.",v:"Una bella utopía de a dos que la realidad afectiva pone a prueba."},
+};
+
+/* ----------------------------------------------------------
+   LÓGICA
+---------------------------------------------------------- */
+const key = (a,b)=> a<=b ? a+"-"+b : b+"-"+a;
+const dist = (a,b)=>{const d=Math.abs(a-b);return Math.min(d,12-d);};
+
+function tierOf(s){
+  if(s>=82) return {label:"Armonía",    col:"var(--jade)",    hex:"#6fa893"};
+  if(s>=66) return {label:"Magnetismo", col:"var(--gold)",    hex:"#c9a24b"};
+  if(s>=58) return {label:"Contraste",  col:"var(--amethyst)",hex:"#9b7fb8"};
+  return         {label:"Desafío",     col:"var(--rust)",    hex:"#c2674a"};
+}
+function elementRelation(a,b){
+  const A=SIGNS[a].el, B=SIGNS[b].el;
+  if(A===B) return "Elementos gemelos";
+  const comp = (x,y)=>(["Fuego","Aire"].includes(x)&&["Fuego","Aire"].includes(y))||(["Tierra","Agua"].includes(x)&&["Tierra","Agua"].includes(y));
+  return comp(A,B) ? "Elementos cómplices" : "Elementos rivales";
+}
+
+let A=0, B=6; // Aries × Libra por defecto
+
+function drawWheel(){
+  const cx=160, cy=160, rGlyph=124, rNode=150;
+  const ns="http://www.w3.org/2000/svg";
+  const svg=document.getElementById("wheel");
+  svg.innerHTML="";
+  const t=tierOf(R[key(A,B)].s);
+
+  const ring=(r,stroke,w,dash)=>{
+    const c=document.createElementNS(ns,"circle");
+    c.setAttribute("cx",cx);c.setAttribute("cy",cy);c.setAttribute("r",r);
+    c.setAttribute("fill","none");c.setAttribute("stroke",stroke);c.setAttribute("stroke-width",w);
+    if(dash)c.setAttribute("stroke-dasharray",dash);
+    svg.appendChild(c);
+  };
+  ring(150,"#2b3447",1);
+  ring(112,"#202838",1,"2 5");
+
+  const pos=i=>{const ang=(-90+i*30)*Math.PI/180;return {x:cx+rGlyph*Math.cos(ang),y:cy+rGlyph*Math.sin(ang)};};
+
+  const pa=pos(A), pb=pos(B);
+  if(A!==B){
+    const halo=document.createElementNS(ns,"line");
+    halo.setAttribute("x1",pa.x);halo.setAttribute("y1",pa.y);
+    halo.setAttribute("x2",pb.x);halo.setAttribute("y2",pb.y);
+    halo.setAttribute("stroke",t.hex);halo.setAttribute("stroke-width","7");
+    halo.setAttribute("stroke-linecap","round");halo.setAttribute("opacity",".18");
+    svg.appendChild(halo);
+    const line=document.createElementNS(ns,"line");
+    line.setAttribute("x1",pa.x);line.setAttribute("y1",pa.y);
+    line.setAttribute("x2",pb.x);line.setAttribute("y2",pb.y);
+    line.setAttribute("stroke",t.hex);line.setAttribute("stroke-width","1.6");
+    line.setAttribute("stroke-linecap","round");
+    svg.appendChild(line);
+  } else {
+    const c=document.createElementNS(ns,"circle");
+    c.setAttribute("cx",pa.x);c.setAttribute("cy",pa.y);c.setAttribute("r",10);
+    c.setAttribute("fill","none");c.setAttribute("stroke",t.hex);c.setAttribute("stroke-width","1.6");
+    svg.appendChild(c);
+  }
+
+  SIGNS.forEach((s,i)=>{
+    const p=pos(i);
+    const on = (i===A||i===B);
+    const txt=document.createElementNS(ns,"text");
+    txt.setAttribute("x",p.x);txt.setAttribute("y",p.y);
+    txt.setAttribute("text-anchor","middle");txt.setAttribute("dominant-baseline","central");
+    txt.setAttribute("font-size", on?22:16);
+    txt.setAttribute("fill", on?t.hex:"#5a6377");
+    txt.setAttribute("font-family","Fraunces, serif");
+    txt.textContent=s.g;
+    svg.appendChild(txt);
+  });
+
+  const deg=dist(A,B)*30;
+  const big=document.createElementNS(ns,"text");
+  big.setAttribute("x",cx);big.setAttribute("y",cy-6);
+  big.setAttribute("text-anchor","middle");
+  big.setAttribute("font-family","Fraunces, serif");
+  big.setAttribute("font-size","40");big.setAttribute("fill","var(--parch)");
+  big.textContent=deg+"°";
+  svg.appendChild(big);
+  const asp=document.createElementNS(ns,"text");
+  asp.setAttribute("x",cx);asp.setAttribute("y",cy+18);
+  asp.setAttribute("text-anchor","middle");
+  asp.setAttribute("font-family","IBM Plex Mono, monospace");
+  asp.setAttribute("font-size","10");asp.setAttribute("letter-spacing","2");
+  asp.setAttribute("fill","var(--gold)");
+  asp.textContent=ASPECTS[dist(A,B)].toUpperCase();
+  svg.appendChild(asp);
+}
+
+function render(){
+  const r=R[key(A,B)], sa=SIGNS[A], sb=SIGNS[B], t=tierOf(r.s);
+
+  document.getElementById("nameA").textContent=sa.n;
+  document.getElementById("nameB").textContent=sb.n;
+
+  document.getElementById("title").innerHTML =
+    `${sa.n}<span class="x">×</span>${sb.n}`;
+
+  const modRel = sa.mo===sb.mo ? "Modalidades gemelas" : "Modalidades distintas";
+  document.getElementById("meta").innerHTML = [
+    `<span class="chip">${sa.g} <b>${sa.el}</b> · ${sa.pl}</span>`,
+    `<span class="chip">${sb.g} <b>${sb.el}</b> · ${sb.pl}</span>`,
+    `<span class="chip"><b>${ASPECTS[dist(A,B)]}</b> · ${dist(A,B)*30}°</span>`,
+    `<span class="chip">${elementRelation(A,B)}</span>`,
+    `<span class="chip">${modRel}</span>`,
+  ].join("");
+
+  document.getElementById("scoreNum").textContent=r.s;
+  document.getElementById("scoreNum").style.color=t.col;
+  const tw=document.getElementById("tier");
+  tw.textContent="— "+t.label; tw.style.color=t.col;
+
+  const fill=document.getElementById("barFill");
+  fill.style.width=r.s+"%"; fill.style.background=t.col;
+
+  document.getElementById("forces").textContent=r.f;
+  document.getElementById("tensions").textContent=r.t;
+  document.getElementById("verdict").textContent="« "+r.v+" »";
+
+  document.querySelectorAll('.picker[data-slot="a"] .glyph').forEach((b,i)=>b.classList.toggle("sel",i===A));
+  document.querySelectorAll('.picker[data-slot="b"] .glyph').forEach((b,i)=>b.classList.toggle("sel",i===B));
+  document.querySelectorAll('td.cell').forEach(c=>{
+    c.classList.toggle("active", c.dataset.k===key(A,B));
+  });
+
+  drawWheel();
+}
+
+function buildRail(id, slot){
+  const rail=document.getElementById(id);
+  SIGNS.forEach((s,i)=>{
+    const b=document.createElement("button");
+    b.className="glyph"; b.type="button";
+    b.innerHTML=`${s.g}<small>${s.n.slice(0,3).toUpperCase()}</small>`;
+    b.setAttribute("aria-label",s.n);
+    b.addEventListener("click",()=>{ if(slot==="a")A=i; else B=i; render(); });
+    rail.appendChild(b);
+  });
+}
+
+function buildMatrix(){
+  const thead=document.querySelector("#matrix thead");
+  const tbody=document.querySelector("#matrix tbody");
+  let h="<tr><th></th>";
+  SIGNS.forEach(s=>h+=`<th title="${s.n}">${s.g}</th>`);
+  h+="</tr>"; thead.innerHTML=h;
+
+  let body="";
+  SIGNS.forEach((rs,i)=>{
+    body+=`<tr><th class="rowh" title="${rs.n}">${rs.g}</th>`;
+    SIGNS.forEach((cs,j)=>{
+      const r=R[key(i,j)], t=tierOf(r.s);
+      body+=`<td class="cell" data-i="${i}" data-j="${j}" data-k="${key(i,j)}"
+              style="background:${t.hex};color:${r.s>=66?'#0d1018':'#f3eede'}"
+              title="${rs.n} × ${cs.n} — ${r.s}/100">${r.s}</td>`;
+    });
+    body+="</tr>";
+  });
+  tbody.innerHTML=body;
+
+  tbody.querySelectorAll("td.cell").forEach(c=>{
+    c.addEventListener("click",()=>{
+      A=+c.dataset.i; B=+c.dataset.j; render();
+      document.querySelector(".reading").scrollIntoView({behavior:"smooth",block:"center"});
+    });
+  });
+}
+
+buildRail("railA","a");
+buildRail("railB","b");
+buildMatrix();
+render();
+</script>
+</body>
+</html>
+
