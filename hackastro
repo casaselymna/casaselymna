@@ -1,1 +1,934 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0d18" />
+<meta name="color-scheme" content="dark" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="AstroHack" />
+<meta name="description" content="AstroHack — Hackea su mente. Lectura astrológica y frases para romper el hielo." />
+<title>AstroHack — Hackea su mente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0d18; --bg-2:#0e1326; --surface:#141a31; --surface-2:#1b2240;
+    --line:rgba(201,162,75,.18); --line-soft:rgba(236,230,216,.08);
+    --ink:#ECE6D8; --muted:#8b91a8; --muted-2:#5f667e;
+    --gold:#d3ad57; --gold-soft:#e6c884; --peri:#7c88d6; --peri-soft:#a6afe8;
+    --bad:#d98a6a; --radius:14px; --maxw:780px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;overflow-x:hidden}
+  html{-webkit-text-size-adjust:100%}
+  button{-webkit-appearance:none;touch-action:manipulation}
+  img,svg{max-width:100%}
+  body{
+    background:
+      radial-gradient(1200px 700px at 80% -10%, rgba(124,136,214,.10), transparent 60%),
+      radial-gradient(900px 600px at -10% 110%, rgba(211,173,87,.08), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:max(24px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) 90px max(20px,env(safe-area-inset-left))}
+  .eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0 0 10px}
+  h1{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:clamp(34px,7vw,52px);line-height:1.04;letter-spacing:-.01em;margin:0 0 12px}
+  h1 .em{font-style:italic;color:var(--gold-soft)}
+  .tagline{font-family:"Fraunces",serif;font-style:italic;font-size:clamp(17px,3.4vw,22px);color:var(--gold-soft);margin:2px 0 0;letter-spacing:.01em}
+  .lede{color:var(--muted);font-size:16px;max-width:54ch;margin:0 auto}
+  header.hero{text-align:center;margin:14px 0 34px}
+
+  .steps{display:flex;gap:8px;justify-content:center;margin:0 0 26px;flex-wrap:wrap}
+  .pip{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted-2);letter-spacing:.04em}
+  .pip .dot{width:7px;height:7px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line-soft);transition:.3s}
+  .pip.active{color:var(--ink)}
+  .pip.active .dot{background:var(--gold);box-shadow:0 0 0 4px rgba(211,173,87,.14)}
+  .pip.done .dot{background:var(--peri)}
+
+  .card{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--line-soft);border-radius:var(--radius);padding:26px 24px;margin:0 0 18px;box-shadow:0 1px 0 rgba(255,255,255,.03) inset, 0 24px 60px -40px rgba(0,0,0,.9)}
+  .step-title{font-family:"Fraunces",serif;font-size:23px;font-weight:600;margin:0 0 4px}
+  .step-sub{color:var(--muted);font-size:14px;margin:0 0 20px}
+
+  .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .opt{appearance:none;cursor:pointer;text-align:left;background:var(--surface-2);border:1px solid var(--line-soft);color:var(--ink);border-radius:11px;padding:14px 16px;font:inherit;transition:.18s;display:flex;flex-direction:column;gap:2px}
+  .opt small{color:var(--muted);font-size:12.5px}
+  .opt:hover{border-color:var(--line);transform:translateY(-1px)}
+  .opt[aria-pressed="true"]{border-color:var(--gold);background:linear-gradient(180deg,rgba(211,173,87,.12),rgba(211,173,87,.04));box-shadow:0 0 0 1px rgba(211,173,87,.3)}
+  .opt[aria-pressed="true"] .lab{color:var(--gold-soft)}
+  .lab{font-weight:500}
+
+  .signs{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px}
+  .sign{cursor:pointer;background:var(--surface-2);border:1px solid var(--line-soft);color:var(--ink);border-radius:11px;padding:13px 12px;text-align:center;transition:.18s}
+  .sign:hover{border-color:var(--line);transform:translateY(-1px)}
+  .sign .glyph{font-family:"Fraunces",serif;font-size:24px;color:var(--gold-soft);line-height:1}
+  .sign .nm{font-size:13px;font-weight:500;margin-top:6px;color:#ffffff}
+  .sign .dt{font-size:10.5px;color:var(--muted-2);margin-top:2px}
+  .sign[aria-pressed="true"]{border-color:var(--gold);background:linear-gradient(180deg,rgba(211,173,87,.14),rgba(211,173,87,.04));box-shadow:0 0 0 1px rgba(211,173,87,.3)}
+
+  .obs-group{margin:0 0 18px}
+  .obs-group h4{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--peri-soft);font-weight:600;margin:0 0 10px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{cursor:pointer;user-select:none;font-size:14px;background:var(--surface-2);border:1px solid var(--line-soft);color:var(--muted);padding:10px 15px;border-radius:999px;transition:.15s;min-height:40px;display:inline-flex;align-items:center}
+  .chip:hover{color:var(--ink);border-color:var(--line)}
+  .chip[aria-pressed="true"]{background:rgba(124,136,214,.16);border-color:rgba(124,136,214,.5);color:var(--peri-soft)}
+  .obs-count{font-size:12.5px;color:var(--muted-2);margin-top:6px}
+
+  .nav{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
+  button.btn{cursor:pointer;font:inherit;font-weight:600;font-size:14.5px;letter-spacing:.01em;border-radius:11px;padding:13px 22px;border:1px solid transparent;transition:.18s}
+  .btn.primary{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#1a1407;box-shadow:0 10px 30px -12px rgba(211,173,87,.6)}
+  .btn.primary:hover{transform:translateY(-1px);filter:brightness(1.04)}
+  .btn.primary:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+  .btn.ghost{background:transparent;border-color:var(--line-soft);color:var(--muted)}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--line)}
+
+  #result{display:none}
+  .res-head{text-align:center;margin:0 0 24px}
+  .res-glyph{font-family:"Fraunces",serif;font-size:46px;color:var(--gold-soft);line-height:1}
+  .res-name{font-family:"Fraunces",serif;font-size:27px;font-weight:600;margin:6px 0 2px}
+  .res-meta{font-size:12.5px;color:var(--muted-2);letter-spacing:.06em;text-transform:uppercase}
+
+  .block{margin:0 0 14px}
+  .block .b-title{font-family:"Fraunces",serif;font-size:19px;font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:10px}
+  .b-title .ix{font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.12em;color:var(--gold);border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-weight:600}
+  .prose{color:var(--ink);font-size:15px}
+  .prose.muted{color:var(--muted)}
+  ul.list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+  ul.list li{position:relative;padding-left:22px;font-size:14.5px;color:var(--ink)}
+  ul.list li::before{content:"";position:absolute;left:4px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+  ul.list.avoid li::before{background:var(--bad)}
+  ol.lines{margin:0;padding:0;list-style:none;counter-reset:l;display:flex;flex-direction:column;gap:10px}
+  ol.lines li{counter-increment:l;position:relative;padding:12px 14px 12px 46px;background:var(--surface-2);border:1px solid var(--line-soft);border-radius:10px;font-size:14.5px}
+  ol.lines li::before{content:counter(l,decimal-leading-zero);position:absolute;left:14px;top:12px;font-size:12px;color:var(--gold);font-weight:600;letter-spacing:.05em}
+
+  /* listas con botón copiar */
+  ol.copylist li{display:flex;align-items:center;gap:10px;justify-content:space-between}
+  ol.copylist li .ct{flex:1}
+  .copy{flex:none;cursor:pointer;font:inherit;font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--gold-soft);background:rgba(211,173,87,.06);border:1px solid var(--line);border-radius:9px;padding:9px 14px;min-height:40px;transition:.15s;white-space:nowrap}
+  .copy:active{transform:scale(.96)}
+  .copy:hover{background:rgba(211,173,87,.12);color:var(--gold)}
+  .copy.ok{color:#9fe0a0;border-color:rgba(120,200,120,.5);background:rgba(120,200,120,.08)}
+
+  .quiet-note{font-size:12.5px;color:var(--muted-2);font-style:italic}
+  .radar-wrap{display:flex;justify-content:center;margin:0 0 6px}
+  .radar-cap{text-align:center;color:var(--muted-2);font-size:12px;letter-spacing:.04em;margin-bottom:14px}
+
+  .footer-note{text-align:center;color:var(--muted-2);font-size:12.5px;margin-top:30px;padding-top:20px;border-top:1px solid var(--line-soft)}
+  .restart{display:block;margin:26px auto 0}
+  .reveal{animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.reveal{animation:none}}
+  @media (max-width:400px){
+    .card{padding:22px 16px}
+    ol.copylist li{padding-left:40px;flex-wrap:wrap}
+    ol.copylist li .ct{min-width:60%}
+    .copy{margin-left:auto}
+  }
+  :focus-visible{outline:2px solid var(--peri);outline-offset:2px;border-radius:8px}
+  .asc-h{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--peri-soft);font-weight:600;margin:24px 0 10px}
+  .asc-none .glyph{color:var(--muted-2)}
+  .shuffle-op{margin-top:12px;font-size:13.5px;padding:11px 16px;min-height:42px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Casa Selymna</p>
+    <h1>AstroHack</h1>
+    <p class="tagline">Hackea su mente</p>
+  </header>
+
+  <div class="steps" id="steps"></div>
+
+  <form id="form" autocomplete="off">
+
+    <section class="card step" data-step="0">
+      <h3 class="step-title">¿Quién es esta persona?</h3>
+      <div class="opts" id="sexOpts"></div>
+    </section>
+
+    <section class="card step" data-step="1" hidden>
+      <h3 class="step-title">Su signo zodiacal</h3>
+      <p class="step-sub">Su signo solar (el de su fecha de nacimiento).</p>
+      <div class="signs" id="signGrid"></div>
+      <h4 class="asc-h">Ascendente — opcional · cómo se muestra a primera vista</h4>
+      <div class="signs" id="ascGrid"></div>
+    </section>
+
+    <section class="card step" data-step="2" hidden>
+      <h3 class="step-title">Lo que observaste</h3>
+      <p class="step-sub">Marca lo que encaje. No hace falta marcar todo — con 4 a 10 basta.</p>
+      <div id="obsArea"></div>
+      <p class="obs-count" id="obsCount">0 marcado</p>
+    </section>
+
+    <section class="card step" data-step="3" hidden>
+      <h3 class="step-title">Tu intención</h3>
+      <div class="opts" id="goalOpts"></div>
+      <h4 style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--peri-soft);margin:22px 0 10px">El contexto</h4>
+      <div class="opts" id="ctxOpts"></div>
+    </section>
+
+    <div class="nav">
+      <button type="button" class="btn ghost" id="prevBtn">Atrás</button>
+      <button type="button" class="btn primary" id="nextBtn">Continuar</button>
+    </div>
+  </form>
+
+  <section id="result"></section>
+
+  <p class="footer-note">Casa Selymna</p>
+</div>
+
+<script>
+/* ============================================================
+   ASTROHACK — motor 100% local. Sin API, sin llamadas externas.
+   ============================================================ */
+
+const AXES = ["sensibilite","sociabilite","energie","intellect","creativite",
+  "aventure","ambition","romantisme","independance","mystere","sensualite",
+  "confiance","spiritualite","discipline","humour","esthetique","famille","nature"];
+
+const RADAR = [
+  ["sensibilite","Sensibilidad"],["sociabilite","Sociabilidad"],["energie","Energía"],
+  ["intellect","Mente"],["romantisme","Romanticismo"],["aventure","Aventura"],
+  ["mystere","Misterio"],["confiance","Seguridad"]
+];
+
+function base(o){const b={};AXES.forEach(a=>b[a]=o[a]??45);return b;}
+
+/* ---------- Los 12 signos ---------- */
+const SIGNS = {
+  belier:{nom:"Aries",glyph:"♈",dates:"21 mar – 19 abr",element:"Fuego",tons:["audacieux","joueur","sincere"],
+    signatures:["Pioner{o|a} que se lanza de frente","Puro impulso: actúa antes de pensar","Competitiv{o|a} de corazón","Impaciente","Líder por naturaleza","Enojos fuertes pero sin rencor"],
+    traits:base({sensibilite:40,sociabilite:65,energie:92,intellect:55,romantisme:50,aventure:82,mystere:30,confiance:85}),
+    personnalite:"Direct{o|a} y de puro instinto, alérgic{o|a} al aburrimiento. Decide rápido, se lanza y odia que le den vueltas. Su motor es la energía: le atrae todo lo que arranca con fuerza.",
+    valeurs:["libertad","acción","sinceridad","reto"],
+    peurs:["el aburrimiento","sentirse frenad{o|a}","la pasividad"],
+    seduit:"Con audacia y movimiento — propón, atrévete, sorprende.",
+    estSeduit:"Por alguien que se planta, que tiene su propia vida y no se deja pisar.",
+    communication:"Ritmo rápido, bromas y retitos amistosos.",
+    attire:["una presencia firme","el humor que le sigue el juego","un poco de reto","ritmo"],
+    eviter:["la duda","los mensajes flojos y eternos","esperar demasiado para proponer","los celos pegajosos"],
+    remarque:["tu seguridad","tu energía","si te atreves o no","tu independencia"],
+    compliments:["Tienes una energía que contagia, de verdad.","Me gusta que digas las cosas de frente.","Contigo uno no se aburre, se nota al toque.","Tienes carácter, y eso me gusta.","Te avientas en la vida, me encanta.","Tienes una sonrisa que despierta a cualquiera.","Sabes lo que quieres, y eso atrae.","Eres de l{os|as} que se atreven, y eso cambia.","Hay una fuerza en ti que se siente.","Dan ganas de moverse contigo."],
+    questions:["¿Qué haces para divertirte?","¿Eres más de deporte o de tranquilidad?","¿Cuál es tu sueño ahorita?","¿Prefieres salir o quedarte en casa?","¿Qué es lo último divertido que hiciste?"]},
+
+  taureau:{nom:"Tauro",glyph:"♉",dates:"20 abr – 20 may",element:"Tierra",tons:["chaleureux","sincere","sensuel"],
+    signatures:["{El más terco|La más terca}","Disfrut{ón|ona} (vive por los sentidos)","Apegad{o|a} a lo material y a la seguridad","Paciente pero explosiv{o|a} cuando l{o|a} llevan al límite","Aterrizad{o|a} en lo concreto y la seguridad","Posesiv{o|a} en el amor","Fiel y constante"],
+    traits:base({sensibilite:58,sociabilite:52,energie:48,intellect:55,romantisme:70,aventure:30,mystere:45,confiance:68}),
+    personnalite:"Estable y sensorial, apegad{o|a} a lo concreto y a lo bello. Se toma su tiempo y no le gusta que lo apuren. El placer de los sentidos —buena comida, buena textura, confort real— es una puerta directa a su corazón.",
+    valeurs:["seguridad","confort","constancia","autenticidad"],
+    peurs:["la inestabilidad","que lo apuren","lo imprevisto y brusco"],
+    seduit:"Creando confort y calidad — un ambiente cuidado, sin prisas.",
+    estSeduit:"Por la constancia, la dulzura y alguien confiable.",
+    communication:"Tranquil{o|a}, sin presión, le gustan los momentos reales.",
+    attire:["la dulzura","un ambiente cuidado","la paciencia","alguien confiable"],
+    eviter:["las prisas","los planes de último minuto","demasiada intensidad de golpe","la falta de confianza"],
+    remarque:["tu presencia tranquila","el cuidado de tus detalles","tu coherencia","tu voz"],
+    compliments:["Tienes una dulzura que hace bien.","Contigo uno se siente tranquilo.","Me gusta tu calma, relaja.","Tienes una sonrisa que reconforta.","Te ves como alguien confiable.","Uno se siente segur{o|a} contigo.","Tienes buen gusto, se nota.","Estás guap{o|a}, te lo tenía que decir.","Me gusta que te tomes tu tiempo.","Hay algo cálido en ti."],
+    questions:["¿Cuál es tu comida favorita?","¿Qué haces para relajarte?","¿Prefieres playa o montaña?","¿Cuál es tu lugar favorito?","¿Te gusta cocinar?"]},
+
+  gemeaux:{nom:"Géminis",glyph:"♊",dates:"21 may – 20 jun",element:"Aire",tons:["joueur","intellectuel","complice"],
+    signatures:["La dualidad y la plasticidad mental","Hablador{|a} y comunicador{|a} nat{o|a}","Curios{o|a}, le entra a todo","Versátil (cambia de opinión seguido)","Mente joven y traviesa","Odia el aburrimiento y la rutina"],
+    traits:base({sensibilite:45,sociabilite:88,energie:72,intellect:82,romantisme:52,aventure:68,mystere:42,confiance:64}),
+    personnalite:"Ágil, curios{o|a}, juguet{ón|ona} con las palabras. Le encanta el intercambio rápido, las ideas que rebotan, el humor. Una plática plana lo aburre en tres segundos.",
+    valeurs:["libertad mental","intercambio","novedad","ligereza"],
+    peurs:["el aburrimiento","el encierro","la rutina"],
+    seduit:"Con ingenio — hazl{o|a} reír, sorprende, abre temas inesperados.",
+    estSeduit:"Por una plática que no se agota y un poco de misterio.",
+    communication:"Rápid{o|a}, divertid{o|a}, lleno de saltos de tema.",
+    attire:["el ingenio","el humor","la novedad","una plática que rebota"],
+    eviter:["las preguntas planas y cerradas","los mensajes muy intensos muy rápido","la posesividad","la pesadez"],
+    remarque:["tu chispa para responder","cómo manejas las palabras","si {lo|la} haces reír","tu curiosidad"],
+    compliments:["Me haces reír, me encanta.","Contigo se puede hablar de todo.","Siempre tienes una historia que contar.","Eres rápid{o|a}, eso lo hace divertido.","Contigo el tiempo se va volando.","Tienes una sonrisa, en serio.","Me gusta tu buena vibra.","Haces todo más ligero.","Contigo nunca es aburrido, eso es raro.","Tienes una energía que saca sonrisas."],
+    questions:["¿Qué haces en tus días?","¿Cuál es tu música favorita?","¿Prefieres mensajes o llamadas?","¿Qué te hace reír?","¿Te gusta salir los fines?"]},
+
+  cancer:{nom:"Cáncer",glyph:"♋",dates:"21 jun – 22 jul",element:"Agua",tons:["chaleureux","sincere","complice"],
+    signatures:["{El más apegado|La más apegada} a la casa y la familia","Hipersensible, a flor de piel","Ciclotímic{o|a} (humores como mareas)","Protector{|a}, cuida a los suyos como nadie","Nostálgic{o|a}","Se mete en su caparazón apenas l{o|a} lastiman"],
+    traits:base({sensibilite:92,sociabilite:48,energie:45,intellect:58,romantisme:80,aventure:30,mystere:58,confiance:42}),
+    personnalite:"Sensible y protector{|a}, muy apegad{o|a} a los vínculos y a los recuerdos. Lee las emociones antes que las palabras. Se protege mientras no hay confianza — y se abre bellísimo cuando sí la hay.",
+    valeurs:["seguridad afectiva","familia","fidelidad","intimidad"],
+    peurs:["el rechazo","el abandono","la frialdad","que lo tomen a la ligera"],
+    seduit:"Creando un refugio de confianza — dulzura, escucha, presencia constante.",
+    estSeduit:"Por la calidez, la constancia y alguien que se muestra de verdad.",
+    communication:"Suave, atent{o|a}, sensible al tono tanto como a las palabras.",
+    attire:["la dulzura","la escucha sincera","la estabilidad emocional","la ternura"],
+    eviter:["la ironía fría","dar calor y luego frialdad","apurar la intimidad","minimizar sus emociones"],
+    remarque:["tu calidez","si de verdad escuchas","tu constancia","cómo hablas de tus seres queridos"],
+    compliments:["Tienes un gran corazón, se nota.","Haces sentir cómod{o|a} a la gente al instante.","Me gusta tu dulzura.","Escuchas de verdad, y eso se agradece.","Tienes una sonrisa que tranquiliza.","Se ve que cuidas a la gente.","Hay una ternura real en ti.","Dan ganas de confiar en ti.","Tienes algo que reconforta.","Se está bien a tu lado, así de simple."],
+    questions:["¿Eres cercan{o|a} a tu familia?","¿Qué te pone de buenas?","¿Qué haces cuando necesitas despejarte?","¿Cuál es tu mejor recuerdo de niñ{o|a}?","¿Tienes mascotas?"]},
+
+  lion:{nom:"Leo",glyph:"♌",dates:"23 jul – 22 ago",element:"Fuego",tons:["audacieux","chaleureux","sincere"],
+    signatures:["Necesidad visceral de reconocimiento y de brillar","Orgullos{o|a}, no soporta la humillación","Generos{o|a} y magnánim{o|a}","Teatral, algo dramátic{o|a}","Leal y protector{|a} de los suyos","Carisma solar"],
+    traits:base({sensibilite:52,sociabilite:85,energie:80,intellect:60,romantisme:72,aventure:60,mystere:35,confiance:90}),
+    personnalite:"Solar, generos{o|a}, le gusta brillar y hacer brillar. Necesita ser vist{o|a} y reconocid{o|a} — no por vanidad, es su naturaleza. Una admiración sincera abre todas las puertas; la adulación falsa las cierra.",
+    valeurs:["orgullo","lealtad","grandeza","autenticidad"],
+    peurs:["que lo ignoren","la humillación","pasar desapercibid{o|a}"],
+    seduit:"Con presencia y generosidad — muestra que admiras, sin arrastrarte.",
+    estSeduit:"Por una admiración real y alguien que también tiene su propia luz.",
+    communication:"Cálid{o|a}, directo, le gustan los cumplidos… pero sinceros.",
+    attire:["una admiración sincera","la presencia","la generosidad","alguien que también brilla"],
+    eviter:["la adulación hueca","opacarlo en público","la indiferencia","la mezquindad"],
+    remarque:["tu seguridad","tu estilo","si tú también brillas","tu generosidad"],
+    compliments:["Tienes una presencia que se nota al entrar.","Iluminas el lugar, es verdad.","Tienes una sonrisa increíble.","Das mucho a la gente, se siente.","Tienes clase.","Haces sentir segura a la gente.","Tienes encanto, es claro.","Dan ganas de estar contigo.","Tienes algo especial, de verdad.","Brillas, y da gusto verlo."],
+    questions:["¿Cuál es tu pasión?","¿Qué haces para divertirte?","¿Cuál es tu recuerdo más bonito?","¿Te gusta bailar?","¿Cuál es tu sueño?"]},
+
+  vierge:{nom:"Virgo",glyph:"♍",dates:"23 ago – 22 sep",element:"Tierra",tons:["intellectuel","sincere","complice"],
+    signatures:["Perfeccionista hasta la obsesión","Necesidad de orden y claridad","Mente analítica que todo lo disecciona","Crític{o|a} (con los demás y consigo mism{o|a})","Servicial y entregad{o|a}","Ansios{o|a}, le da demasiadas vueltas"],
+    traits:base({sensibilite:60,sociabilite:48,energie:52,intellect:86,romantisme:50,aventure:35,mystere:52,confiance:50}),
+    personnalite:"Observador{|a} fin{o|a}, exigente, atent{o|a} a los detalles que los demás no ven. Desconfía del exceso y de lo vago. Conquista con la precisión, lo útil de verdad y la atención justa.",
+    valeurs:["utilidad","sinceridad","orden","competencia"],
+    peurs:["el desorden","lo falso","perder el control"],
+    seduit:"Con atención al detalle y cosas útiles de verdad — sé confiable y detallista.",
+    estSeduit:"Por la sinceridad, la inteligencia y alguien cuidad{o|a}.",
+    communication:"Medid{o|a}, observador{|a}, odia las promesas huecas.",
+    attire:["la atención al detalle","la confianza","una mente despierta","la atención real"],
+    eviter:["la exageración","los cumplidos genéricos","el desorden","las promesas al aire"],
+    remarque:["tu precisión","si escuchas los detalles","tu coherencia","tu calma"],
+    compliments:["Tienes una sonrisa bonita, discreta pero linda.","Me gusta que cuides los detalles.","Se nota que se puede contar contigo.","Te cuidas, se nota.","Tienes una calma que gusta.","Piensas más de lo que muestras, y eso atrae.","Me gusta cómo escuchas.","Tienes clase, sin exagerar.","Haces las cosas bien, eso es raro.","Se ve que eres buena persona."],
+    questions:["¿A qué te dedicas?","¿Eres más de orden o de desorden?","¿Qué te relaja?","¿Te gusta aprender cosas nuevas?","¿Cuál es tu gustito personal?"]},
+
+  balance:{nom:"Libra",glyph:"♎",dates:"23 sep – 22 oct",element:"Aire",tons:["chaleureux","complice","intellectuel"],
+    signatures:["Busca la armonía, huye del conflicto","{El indeciso crónico|La indecisa crónica}","Diplomátic{o|a} y conciliador{|a}","Esteta (ama lo bello)","Encantador{|a} natural","Necesita al otro, odia la soledad"],
+    traits:base({sensibilite:62,sociabilite:82,energie:55,intellect:68,romantisme:80,aventure:48,mystere:45,confiance:50}),
+    personnalite:"Encantador{|a}, diplomátic{o|a}, sensible a la armonía y a la estética. Busca el equilibrio y odia el conflicto de frente. El encanto, la belleza y la delicadeza del trato le importan muchísimo.",
+    valeurs:["armonía","belleza","justicia","pareja"],
+    peurs:["el conflicto","la soledad","la grosería"],
+    seduit:"Con encanto y elegancia — cuida el ambiente y la belleza del momento.",
+    estSeduit:"Por la delicadeza, el equilibrio y una linda complicidad.",
+    communication:"Suave, diplomátic{o|a}, sensible a la estética del trato.",
+    attire:["la elegancia","el encanto","la armonía","una linda plática"],
+    eviter:["la brusquedad","el conflicto sin sentido","la vulgaridad","forzar una decisión rápida"],
+    remarque:["tu elegancia","cómo pones el ambiente","tu delicadeza","tu buen gusto"],
+    compliments:["Tienes un encanto increíble.","Contigo todo es más agradable.","Tienes una sonrisa preciosa.","Me gusta tu dulzura.","Tienes clase de manera natural.","Uno se siente bien al platicar contigo.","Tienes buen gusto, se nota.","Hay algo dulce en ti.","Pones buena vibra.","Estás guap{o|a}, te lo tenía que decir."],
+    questions:["¿Cuál es tu salida ideal?","¿Qué tipo de música te gusta?","¿Prefieres cine o restaurante?","¿Cuál es un lugar que te parece bonito?","¿Eres más de fiesta o de noche tranquila?"]},
+
+  scorpion:{nom:"Escorpio",glyph:"♏",dates:"23 oct – 21 nov",element:"Agua",tons:["sensuel","sincere","audacieux"],
+    signatures:["Intensidad emocional extrema","Magnétic{o|a} y misterios{o|a}","Celos{o|a} y posesiv{o|a}","Necesidad de control","Rencoros{o|a} (no olvida una traición)","Capta a la gente detrás de sus máscaras","Apasionad{o|a}: todo o nada"],
+    traits:base({sensibilite:82,sociabilite:45,energie:62,intellect:76,romantisme:72,aventure:50,mystere:92,confiance:55}),
+    personnalite:"Intens{o|a}, magnétic{o|a}, lee a la gente a profundidad. Odia lo superficial y lo falso — lo detecta al instante. Quiere lo verdadero, lo auténtico, lo profundo. La confianza se gana, no se regala.",
+    valeurs:["verdad","lealtad","profundidad","autenticidad"],
+    peurs:["la traición","perder el control","que lo manipulen"],
+    seduit:"Con profundidad y autenticidad — sin máscaras, puro de verdad.",
+    estSeduit:"Por alguien sincero, intenso, que no le teme a la intimidad real.",
+    communication:"Profund{o|a}, a veces callad{o|a}, odia la plática hueca.",
+    attire:["la autenticidad","la profundidad","una presencia firme","un misterio real"],
+    eviter:["la mentira, aunque sea chica","lo superficial","jugar con doble cara","traicionar la confianza"],
+    remarque:["tu mirada","si eres real","lo que escondes","tu intensidad"],
+    compliments:["Tienes una mirada que dice mucho.","Hay algo magnético en ti.","Me gusta que no finjas.","Tienes una presencia fuerte, atrae.","Contigo uno siente que sí importa.","Tienes un lado misterioso que gusta.","Eres intens{o|a}, y eso me gusta.","Dan ganas de conocerte de verdad.","Tienes algo que no se olvida.","No eres como los demás, se siente."],
+    questions:["¿Qué es algo que poca gente sabe de ti?","¿Confías fácil en la gente?","¿Qué te atrae de alguien?","¿Te van las cosas intensas o tranquilas?","¿Cuál es tu mayor pasión?"]},
+
+  sagittaire:{nom:"Sagitario",glyph:"♐",dates:"22 nov – 21 dic",element:"Fuego",tons:["joueur","audacieux","intellectuel"],
+    signatures:["{El aventurero y gran viajero|La aventurera y gran viajera}","Optimista incurable","Franc{o|a} al punto de ser imprudente","Filósof{o|a} en busca de sentido","Enamorad{o|a} de su libertad","Le huye al compromiso y a la rutina"],
+    traits:base({sensibilite:48,sociabilite:76,energie:82,intellect:70,romantisme:52,aventure:92,mystere:40,confiance:76}),
+    personnalite:"Libre, optimista, sediento de horizontes y de sentido. Le encanta explorar, aprender, reír fuerte. La libertad no se negocia: cualquier intento que huela a jaula lo hace huir.",
+    valeurs:["libertad","aventura","sentido","honestidad"],
+    peurs:["el encierro","la rutina","las ataduras que ahogan"],
+    seduit:"Con aventura y libertad — propón viaje, sorpresa, algo grande.",
+    estSeduit:"Por alguien independiente que comparte sus ganas de descubrir.",
+    communication:"Espontáne{o|a}, a veces filosófic{o|a}, odia sentirse encerrad{o|a}.",
+    attire:["la libertad","la aventura","el optimismo","las ganas de descubrir"],
+    eviter:["la posesividad","los planes demasiado cerrados muy rápido","la pesadez","la espera pegajosa"],
+    remarque:["tu independencia","tu humor","tus ganas de más mundo","tu optimismo"],
+    compliments:["Tienes unas ganas de vivir que contagian.","Me gusta tu sinceridad.","Contigo uno se ríe, seguro.","Se ve que has vivido un montón.","Tienes una risa, me encanta.","Dan ganas de salir de aventura contigo.","Siempre andas de buenas, y eso hace bien.","Tienes una energía positiva, se siente.","Contigo nunca es aburrido.","Se te ve libre, y te queda bien."],
+    questions:["¿Te gusta viajar? ¿A dónde sueñas ir?","¿Qué es lo más loco que has hecho?","¿Qué haces para divertirte?","¿Eres más de aventura o de tranquilidad?","¿Cuál es tu sueño?"]},
+
+  capricorne:{nom:"Capricornio",glyph:"♑",dates:"22 dic – 19 ene",element:"Tierra",tons:["sincere","intellectuel","sensuel"],
+    signatures:["Ambicios{o|a} (apunta a la cima)","Control y rigor exigente","Paciente (juega a largo plazo)","Disciplinad{o|a} y organizad{o|a}","Reservad{o|a}, pudor emocional","Responsable, a veces pesimista"],
+    traits:base({sensibilite:50,sociabilite:45,energie:58,intellect:76,romantisme:52,aventure:38,mystere:60,confiance:72}),
+    personnalite:"Ambicios{o|a}, centrad{o|a}, juega a largo plazo. Desconfía del show y de las prisas. Respeta la seriedad, la paciencia y a quien de verdad construye algo.",
+    valeurs:["éxito","respeto","constancia","integridad"],
+    peurs:["el fracaso","perder el control","la ligereza que sale cara"],
+    seduit:"Con seriedad y constancia — muestra que construyes, no que juegas.",
+    estSeduit:"Por la madurez, la paciencia y alguien ambicioso a su manera.",
+    communication:"Tranquil{o|a}, selectiv{o|a}, se abre lento pero profundo.",
+    attire:["la seriedad","la ambición","la paciencia","la madurez"],
+    eviter:["la inmadurez","las prisas","las promesas no cumplidas","el puro show"],
+    remarque:["tu seriedad","si cumples tu palabra","tu ambición","tu reserva elegante"],
+    compliments:["Tienes una calma que tranquiliza.","Se nota que eres alguien sólid{o|a}.","Me gusta tu seriedad.","Tienes ambición, se nota.","Tienes una sonrisa bonita, y hay que ganársela.","Te ves como alguien confiable.","Tienes clase.","Se puede contar contigo, se siente.","Avanzas en la vida, y te queda bien.","Tienes una presencia tranquila, me gusta."],
+    questions:["¿A qué te dedicas?","¿Cuáles son tus planes ahorita?","¿Qué haces para relajarte?","¿Cuál es tu mayor sueño?","¿Tienes planes grandes para más adelante?"]},
+
+  verseau:{nom:"Acuario",glyph:"♒",dates:"20 ene – 18 feb",element:"Aire",tons:["intellectuel","joueur","complice"],
+    signatures:["Original, hasta excéntric{o|a}","Independiente y anticonformista","Visionari{o|a}, adelantad{o|a} a su época","Desapegad{o|a} emocionalmente, muy cerebral","Humanista que defiende causas","Impredecible, no entra en ninguna caja"],
+    traits:base({sensibilite:48,sociabilite:65,energie:62,intellect:86,romantisme:45,aventure:66,mystere:62,confiance:64}),
+    personnalite:"Original, independiente, atraíd{o|a} por las ideas y por lo que se sale del molde. Odia lo común y lo posesivo. Curios{o|a} de todo, pero guarda distancia: primero su libertad mental.",
+    valeurs:["libertad","originalidad","ideas","autenticidad"],
+    peurs:["perder su libertad","el aburrimiento","la posesividad"],
+    seduit:"Con originalidad e ideas — sé diferente y sin agobiar.",
+    estSeduit:"Por una mente libre, sorprendente, que respeta su independencia.",
+    communication:"Cerebral, medio fuera de lo común, le huye a lo convencional y a la presión.",
+    attire:["la originalidad","la independencia","las ideas nuevas","la mente abierta"],
+    eviter:["la posesividad","lo convencional","las preguntas banales","la presión emocional rápida"],
+    remarque:["tu singularidad","tus ideas","si respetas su espacio","tu apertura"],
+    compliments:["No eres como todos, me encanta.","Tienes ideas que se salen de lo común.","Contigo se habla de cosas interesantes.","Se te ve libre, se siente.","Tienes un lado único que atrae.","Me gusta tu curiosidad.","Tienes una sonrisa buena onda y real.","Tienes un estilo aparte, y eso cambia.","Contigo no hay aburrimiento.","Tienes algo distinto, y eso gusta."],
+    questions:["¿Cuál es tu pasión medio rara?","¿Qué haces distinto a los demás?","¿Qué te interesa ahorita?","¿Te gusta la tecnología, lo nuevo?","¿Cuál es tu sueño un poco loco?"]},
+
+  poissons:{nom:"Piscis",glyph:"♓",dates:"19 feb – 20 mar",element:"Agua",tons:["sincere","chaleureux","sensuel"],
+    signatures:["Soñador{|a} (vive en su mundo)","Hipersensible y profundamente empátic{o|a}","Fibra artística e imaginativa","Intuitiv{o|a}, casi médium","Tiende a escapar de la realidad","Compasiv{o|a}, se sacrifica por los demás"],
+    traits:base({sensibilite:92,sociabilite:52,energie:45,intellect:60,romantisme:85,aventure:42,mystere:66,confiance:42}),
+    personnalite:"Soñador{|a}, intuitiv{o|a}, profundamente empátic{o|a}. Vive mucho por dentro — emociones, arte, imaginación. Sensible al menor desplante, pero de una dulzura rara cuando lo dejas entrar.",
+    valeurs:["amor","arte","compasión","conexión de alma"],
+    peurs:["la dureza","el rechazo","un mundo demasiado brutal"],
+    seduit:"Con poesía y ternura — toca su imaginación y su corazón.",
+    estSeduit:"Por la dulzura, la sinceridad y una conexión emocional de verdad.",
+    communication:"Sensible, intuitiv{o|a}, capta lo no dicho mejor que las palabras.",
+    attire:["la dulzura","la poesía","la sensibilidad","una conexión profunda"],
+    eviter:["la dureza","el cinismo","minimizar sus emociones","demasiada frialdad racional"],
+    remarque:["tu dulzura","tu sensibilidad","si entiendes sin que te expliquen","tu imaginación"],
+    compliments:["Tienes una dulzura que toca.","Parece que entiendes todo sin que se diga.","Tienes una mirada llena de ternura.","Me gusta tu lado soñador.","Tienes un gran corazón, se nota.","Escuchas de verdad, y eso se agradece.","Tienes algo que calma.","Se te ve sensible, y eso es bonito.","Tienes una bella alma, se siente.","Se está bien a tu lado."],
+    questions:["¿Cuál es una película o canción que ames?","¿Con qué sueñas ahorita?","¿Qué te conmueve de la gente?","¿Te gusta el arte o la música?","¿Qué haces cuando estás triste para sentirte mejor?"]}
+};
+
+/* ---------- Observaciones (deltas de rasgos) ---------- */
+const OBS_GROUPS = [
+  {titre:"Actitud y energía", items:[
+    {id:"souriante",label:"Muy sonriente",d:{sociabilite:18,sensibilite:8,confiance:6}},
+    {id:"timide",label:"Tímid{o|a}",d:{sociabilite:-22,confiance:-14,mystere:10}},
+    {id:"reserve",label:"Reservad{o|a}",d:{sociabilite:-16,mystere:14,intellect:6}},
+    {id:"extraverti",label:"Extrovertid{o|a}",d:{sociabilite:28,energie:14,confiance:10}},
+    {id:"introverti",label:"Introvertid{o|a}",d:{sociabilite:-20,mystere:10,sensibilite:8}},
+    {id:"calme",label:"Tranquil{o|a}",d:{energie:-12,discipline:12,confiance:6}},
+    {id:"stresse",label:"Estresad{o|a}",d:{sensibilite:14,confiance:-12,energie:8}},
+    {id:"charismatique",label:"Carismátic{o|a}",d:{confiance:24,sociabilite:16,esthetique:8}},
+    {id:"leader",label:"Líder",d:{confiance:22,ambition:18,independance:14}},
+    {id:"independant",label:"Independiente",d:{independance:24,confiance:10,sociabilite:-6}},
+    {id:"mysterieux",label:"Misterios{o|a}",d:{mystere:26,sensualite:10,sociabilite:-8}},
+    {id:"drole",label:"Divertid{o|a}",d:{humour:26,sociabilite:12,intellect:8}},
+  ]},
+  {titre:"Estilo y presencia", items:[
+    {id:"elegant",label:"Elegante",d:{esthetique:24,confiance:8,discipline:8}},
+    {id:"coquette",label:"Muy arreglad{o|a}",d:{esthetique:22,sensualite:14,sociabilite:6}},
+    {id:"sportive",label:"Deportista",d:{energie:22,discipline:16,confiance:10}},
+    {id:"sensuelle",label:"Sensual",d:{sensualite:26,romantisme:12,mystere:8}},
+    {id:"discrete",label:"Discret{o|a}",d:{mystere:12,sociabilite:-12,esthetique:6}},
+    {id:"naturelle",label:"Natural / sencill{o|a}",d:{nature:12,confiance:8}},
+  ]},
+  {titre:"Mente y temperamento", items:[
+    {id:"intellectuelle",label:"Intelectual",d:{intellect:26,creativite:8,mystere:8}},
+    {id:"creative",label:"Creativ{o|a}",d:{creativite:26,sensibilite:12,esthetique:12}},
+    {id:"spirituelle",label:"Espiritual",d:{spiritualite:26,sensibilite:14,mystere:12}},
+    {id:"ambitieuse",label:"Ambicios{o|a}",d:{ambition:24,discipline:14,confiance:10}},
+    {id:"romantique",label:"Romántic{o|a}",d:{romantisme:26,sensibilite:14}},
+    {id:"aventureuse",label:"Aventurer{o|a}",d:{aventure:26,energie:14,independance:10}},
+    {id:"protectrice",label:"Protector{|a}",d:{famille:20,sensibilite:20,romantisme:10}},
+    {id:"curieuse",label:"Curios{o|a}",d:{intellect:16,aventure:12,sociabilite:8}},
+    {id:"perfectionniste",label:"Perfeccionista",d:{discipline:20,intellect:12,esthetique:10}},
+  ]},
+  {titre:"Intereses", items:[
+    {id:"famille",label:"La familia importa mucho",d:{famille:24,sensibilite:10}},
+    {id:"animaux",label:"Animales",d:{sensibilite:12,nature:14,famille:8}},
+    {id:"voyage",label:"Viajar",d:{aventure:22,independance:12,sociabilite:6}},
+    {id:"mode",label:"Moda",d:{esthetique:22,sociabilite:8,sensualite:8}},
+    {id:"musique",label:"Música",d:{creativite:16,sensibilite:14,esthetique:8}},
+    {id:"lecture",label:"Lectura",d:{intellect:18,creativite:10,mystere:6}},
+    {id:"cinema",label:"Cine",d:{creativite:14,sensibilite:10,intellect:8}},
+    {id:"cuisine",label:"Cocina",d:{sensualite:14,famille:10,esthetique:8}},
+    {id:"nature",label:"Naturaleza / aire libre",d:{nature:24,aventure:12,energie:8}},
+    {id:"fete",label:"Fiestas / salidas",d:{sociabilite:22,energie:14,humour:8}},
+    {id:"bienetre",label:"Bienestar / yoga",d:{spiritualite:16,discipline:12,sensibilite:10}},
+    {id:"art",label:"Arte / exposiciones",d:{creativite:18,esthetique:18,intellect:8}},
+  ]},
+];
+
+/* ---------- Sexo / pronombres ---------- */
+const SEX = [
+  {id:"f",lab:"Mujer",pr:{suj:"ella",obj:"la",pos:"su",g:"f"}},
+  {id:"h",lab:"Hombre",pr:{suj:"él",obj:"lo",pos:"su",g:"m"}},
+];
+
+const GOALS = {
+  glace:{lab:"Romper el hielo",small:"un primer contacto ligero"},
+  discussion:{lab:"Iniciar una plática",small:"armar una buena conversación"},
+  envie:{lab:"Dar ganas de saber más",small:"crear intriga"},
+  cafe:{lab:"Invitar a un café",small:"proponer un momento de verdad"},
+  seduire:{lab:"Conquistar",small:"mostrar interés, con clase"},
+};
+
+const CONTEXTS = {
+  instagram:{lab:"Instagram / DM"},
+  sport:{lab:"Gimnasio"},
+  travail:{lab:"Trabajo / escuela"},
+  soiree:{lab:"Fiesta / bar"},
+  app:{lab:"App de citas"},
+  quotidien:{lab:"En el día a día"},
+};
+
+/* ---------- Frases de acercamiento (por contexto + tono) ---------- */
+const OPENERS = [
+  // INSTAGRAM
+  {ctx:"instagram",tons:["joueur","complice"],txt:"Vi tu perfil y me sacó una sonrisa. Quería venir a saludarte."},
+  {ctx:"instagram",tons:["sincere","chaleureux"],txt:"Hola, me gustas un montón. Preferí escribirte en vez de solo dar like."},
+  {ctx:"instagram",tons:["intellectuel"],txt:"Me late lo que subes, se nota diferente. ¿Llevas mucho haciéndolo?"},
+  {ctx:"instagram",tons:["audacieux"],txt:"Voy directo al grano: tu perfil me llamó la atención. ¿Platicamos?"},
+  {ctx:"instagram",tons:["joueur","intellectuel"],txt:"Pregunta importante: ¿siempre sales tú en las fotos o hay filtro mágico? 😄"},
+  {ctx:"instagram",tons:["chaleureux","sincere"],txt:"Tu feed tiene muy buena vibra. ¿Qué hay detrás de todas esas fotos?"},
+  {ctx:"instagram",tons:["complice","joueur"],txt:"Ok, ya te stalkeé tres fotos y me quedé. Mejor te saludo de una vez."},
+  {ctx:"instagram",tons:["sensuel","audacieux"],txt:"Hay algo en tu mirada en esa foto que no pude ignorar. Tenía que escribirte."},
+  {ctx:"instagram",tons:["intellectuel","sincere"],txt:"No suelo escribirle a desconocidos, pero tu perfil me dio curiosidad."},
+  {ctx:"instagram",tons:["joueur"],txt:"Si te escribo aquí, ¿cuenta como buen primer paso o pierdo puntos? 😄"},
+  {ctx:"instagram",tons:["chaleureux"],txt:"Tus historias me sacaron una sonrisa hoy. Gracias por eso, y hola."},
+  // GIMNASIO
+  {ctx:"sport",tons:["joueur","sincere"],txt:"Te veo seguido por aquí. Ya dejo de hacer como que estiro y vengo a saludarte."},
+  {ctx:"sport",tons:["sincere","chaleureux"],txt:"Vienes bien seguido, eso se respeta. Quería decírtelo nada más."},
+  {ctx:"sport",tons:["audacieux"],txt:"No le doy más vueltas: me gustas, quería venir a platicarte."},
+  {ctx:"sport",tons:["complice","joueur"],txt:"¿Nos echamos porras esta semana? Yo invito el jugo al terminar."},
+  {ctx:"sport",tons:["chaleureux","complice"],txt:"Le metes con todo, se nota. ¿Te invito un licuado por el esfuerzo?"},
+  {ctx:"sport",tons:["joueur"],txt:"Si te digo que eres mi mejor motivación para venir aquí, ¿qué tan exagerado sueno? 😄"},
+  {ctx:"sport",tons:["sincere"],txt:"Llevo días queriendo saludarte y hoy sí me animé. Hola."},
+  {ctx:"sport",tons:["intellectuel","complice"],txt:"¿Me das un tip de rutina? Es mi excusa honesta para platicarte. 😄"},
+  {ctx:"sport",tons:["audacieux","sensuel"],txt:"Mala idea concentrarme contigo cerca. Mejor vengo a presentarme."},
+  {ctx:"sport",tons:["chaleureux"],txt:"Se ve que eres constante, eso me gusta. ¿Cómo te llamas?"},
+  {ctx:"sport",tons:["joueur","complice"],txt:"Reto: la próxima serie la hacemos juntos. ¿Aceptas?"},
+  // TRABAJO / ESCUELA
+  {ctx:"travail",tons:["sincere","intellectuel"],txt:"Fuera del trabajo, me gustaría conocerte mejor. ¿Un café un día de estos?"},
+  {ctx:"travail",tons:["complice","sincere"],txt:"Nos cruzamos seguido sin hablar. ¿Lo arreglamos con un café?"},
+  {ctx:"travail",tons:["joueur"],txt:"El mejor momento de mi día es cuando te encuentro. ¿Un café para confirmarlo? 😄"},
+  {ctx:"travail",tons:["sincere"],txt:"Mejor te lo digo de frente: me gustas. ¿Un café un día, fuera de aquí?"},
+  {ctx:"travail",tons:["chaleureux","complice"],txt:"Me gustan nuestros encuentros en el pasillo. ¿Los volvemos un café de verdad?"},
+  {ctx:"travail",tons:["audacieux"],txt:"Va, me aviento antes de arrepentirme: ¿comemos juntos un día?"},
+  {ctx:"travail",tons:["intellectuel","sincere"],txt:"Me caes muy bien y me da curiosidad quién eres fuera de aquí. ¿Platicamos?"},
+  {ctx:"travail",tons:["complice","joueur"],txt:"Propongo una tregua a las juntas aburridas: un café tú y yo. ¿Va?"},
+  {ctx:"travail",tons:["chaleureux"],txt:"Trabajas con mucha calma, se nota. Quería conocerte un poco más."},
+  {ctx:"travail",tons:["audacieux","sincere"],txt:"Si no te lo pregunto hoy, me arrepiento: ¿salimos un día?"},
+  {ctx:"travail",tons:["joueur"],txt:"Aviso: voy a usar la máquina de café como excusa para hablarte más seguido. 😄"},
+  // FIESTA / BAR
+  {ctx:"soiree",tons:["audacieux","chaleureux"],txt:"Si no venía a hablarte, me iba a arrepentir toda la noche. Así que aquí estoy."},
+  {ctx:"soiree",tons:["joueur"],txt:"Claramente eres la persona más buena onda de aquí. ¿O me equivoco?"},
+  {ctx:"soiree",tons:["sincere"],txt:"Hola, solo quería venir a platicarte. Te ves buena onda."},
+  {ctx:"soiree",tons:["sensuel","audacieux"],txt:"Hay algo en ti que me hizo cruzar el lugar. Quería decírtelo."},
+  {ctx:"soiree",tons:["complice","joueur"],txt:"Te vi desde allá y dije: tengo que ir a hablarle. Entonces… ¿platicamos?"},
+  {ctx:"soiree",tons:["chaleureux"],txt:"¡Hola! Te invito algo de tomar y me dices tu nombre. ¿Cómo ves?"},
+  {ctx:"soiree",tons:["joueur","complice"],txt:"Aposté conmigo que venía a saludarte. Ya gané. Hola."},
+  {ctx:"soiree",tons:["audacieux"],txt:"Voy a ser esa persona que cruza el lugar solo para decirte hola. Hola."},
+  {ctx:"soiree",tons:["sensuel","chaleureux"],txt:"Con este ruido va a costar, pero valía la pena venir a conocerte."},
+  {ctx:"soiree",tons:["sincere","complice"],txt:"No conozco a casi nadie aquí, pero a ti te quería conocer. ¿Empezamos?"},
+  {ctx:"soiree",tons:["joueur"],txt:"Pregunta seria de fiesta: ¿bailas o cuidas las chamarras como yo? 😄"},
+  // APP DE CITAS
+  {ctx:"app",tons:["joueur","intellectuel"],txt:"Vamos a saltarnos el '¿cómo estás?' de siempre. Mejor cuéntame qué te gusta hacer."},
+  {ctx:"app",tons:["sincere","chaleureux"],txt:"Tu perfil me gustó de inmediato. Quería platicarte en serio."},
+  {ctx:"app",tons:["audacieux"],txt:"La verdad: me gustas. Ya, lo dije. 😊"},
+  {ctx:"app",tons:["complice"],txt:"¿Jugamos? Tú me dices algo de ti, yo te digo algo de mí. Empiezo: sonreí al ver tu perfil."},
+  {ctx:"app",tons:["joueur","complice"],txt:"Volado: águila me contestas, sol también me contestas. 😄 ¿Cómo vas?"},
+  {ctx:"app",tons:["sincere"],txt:"No voy a fingir: tu sonrisa en la foto me hizo dar like al toque."},
+  {ctx:"app",tons:["intellectuel"],txt:"De todo tu perfil, esto me intrigó: {question}"},
+  {ctx:"app",tons:["chaleureux","sincere"],txt:"Hola, ¿cómo va tu día de verdad? No el típico 'bien y tú'."},
+  {ctx:"app",tons:["joueur"],txt:"Aviso de honestidad: ya planeé nuestra primera plática de café. Falta que digas que sí. 😄"},
+  {ctx:"app",tons:["audacieux","sensuel"],txt:"Tienes una sonrisa peligrosa. Tenía que decírtelo antes de seguir."},
+  {ctx:"app",tons:["complice","joueur"],txt:"Dos verdades y una mentira, ¿le entras? Empiezo yo."},
+  // DÍA A DÍA
+  {ctx:"quotidien",tons:["sincere","chaleureux"],txt:"Hola, te lo digo simple: me dieron ganas de venir a platicarte."},
+  {ctx:"quotidien",tons:["joueur"],txt:"Va, me aviento: vine nada más a saludarte. ¿Funciona? 😄"},
+  {ctx:"quotidien",tons:["audacieux"],txt:"Prefiero atreverme que quedarme con las ganas: hola, quería conocerte."},
+  {ctx:"quotidien",tons:["intellectuel","complice"],txt:"Una pregunta fácil para empezar: {question}"},
+  {ctx:"quotidien",tons:["sensuel","sincere"],txt:"Hay personas que se notan de inmediato. Tú eres una de ellas."},
+  {ctx:"quotidien",tons:["chaleureux"],txt:"Disculpa que te interrumpa, pero me iba a quedar con las ganas de saludarte."},
+  {ctx:"quotidien",tons:["joueur","complice"],txt:"Te juro que no hago esto seguido, pero hoy valía la pena. Hola."},
+  {ctx:"quotidien",tons:["sincere"],txt:"Te vi y pensé: si no le digo hola, me arrepiento. Entonces, hola."},
+  {ctx:"quotidien",tons:["audacieux"],txt:"Voy al grano: me gustaría conocerte. ¿Te late?"},
+  {ctx:"quotidien",tons:["intellectuel"],txt:"Tienes cara de tener buenas historias. ¿Me cuentas una?"},
+  {ctx:"quotidien",tons:["chaleureux","complice"],txt:"Hoy decidí ser más valiente de lo normal. Empiezo por saludarte."},
+];
+
+/* ============================================================
+   ESTADO + RENDER
+   ============================================================ */
+const state = {step:0, sex:null, sign:null, asc:null, obs:new Set(), goal:null, ctx:null};
+let CURRENT=null;
+const STEP_LABELS = ["Perfil","Signo","Observaciones","Intención"];
+
+const $ = s => document.querySelector(s);
+const el = (t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+
+function renderSteps(){
+  const c=$("#steps");c.innerHTML="";
+  STEP_LABELS.forEach((l,i)=>{
+    const p=el("div","pip"+(i===state.step?" active":"")+(i<state.step?" done":""));
+    p.innerHTML=`<span class="dot"></span>${l}`;c.appendChild(p);
+  });
+}
+
+function renderSex(){
+  const c=$("#sexOpts");c.innerHTML="";
+  SEX.forEach(s=>{
+    const b=el("button","opt");b.type="button";
+    b.setAttribute("aria-pressed", state.sex===s.id);
+    b.innerHTML=`<span class="lab">${s.lab}</span>`;
+    b.onclick=()=>{state.sex=s.id;renderSex();updateNav();};
+    c.appendChild(b);
+  });
+}
+
+function renderSigns(){
+  const c=$("#signGrid");c.innerHTML="";
+  Object.entries(SIGNS).forEach(([k,s])=>{
+    const b=el("button","sign");b.type="button";
+    b.setAttribute("aria-pressed", state.sign===k);
+    b.innerHTML=`<div class="glyph">${s.glyph}</div><div class="nm">${s.nom}</div><div class="dt">${s.dates}</div>`;
+    b.onclick=()=>{state.sign=k;renderSigns();updateNav();};
+    c.appendChild(b);
+  });
+}
+
+function renderAsc(){
+  const c=$("#ascGrid");if(!c)return;c.innerHTML="";
+  const none=el("button","sign asc-none");none.type="button";
+  none.setAttribute("aria-pressed", state.asc===null);
+  none.innerHTML=`<div class="glyph">—</div><div class="nm">No lo sé</div><div class="dt">omitir</div>`;
+  none.onclick=()=>{state.asc=null;renderAsc();};
+  c.appendChild(none);
+  Object.entries(SIGNS).forEach(([k,sg])=>{
+    const b=el("button","sign");b.type="button";
+    b.setAttribute("aria-pressed", state.asc===k);
+    b.innerHTML=`<div class="glyph">${sg.glyph}</div><div class="nm">${sg.nom}</div><div class="dt">${sg.dates}</div>`;
+    b.onclick=()=>{state.asc=k;renderAsc();};
+    c.appendChild(b);
+  });
+}
+function renderObs(){
+  const area=$("#obsArea");area.innerHTML="";
+  OBS_GROUPS.forEach(g=>{
+    const wrap=el("div","obs-group");
+    wrap.appendChild(el("h4",null,g.titre));
+    const chips=el("div","chips");
+    g.items.forEach(it=>{
+      const ch=el("button","chip");ch.type="button";
+      ch.textContent=genderize(it.label);
+      ch.setAttribute("aria-pressed", state.obs.has(it.id));
+      ch.onclick=()=>{
+        state.obs.has(it.id)?state.obs.delete(it.id):state.obs.add(it.id);
+        ch.setAttribute("aria-pressed", state.obs.has(it.id));
+        $("#obsCount").textContent=`${state.obs.size} marcado${state.obs.size>1?"s":""}`;
+      };
+      chips.appendChild(ch);
+    });
+    wrap.appendChild(chips);area.appendChild(wrap);
+  });
+}
+
+function renderGoal(){
+  const c=$("#goalOpts");c.innerHTML="";
+  Object.entries(GOALS).forEach(([k,g])=>{
+    const b=el("button","opt");b.type="button";
+    b.setAttribute("aria-pressed", state.goal===k);
+    b.innerHTML=`<span class="lab">${g.lab}</span><small>${g.small}</small>`;
+    b.onclick=()=>{state.goal=k;renderGoal();updateNav();};
+    c.appendChild(b);
+  });
+  const cx=$("#ctxOpts");cx.innerHTML="";
+  Object.entries(CONTEXTS).forEach(([k,g])=>{
+    const b=el("button","opt");b.type="button";
+    b.setAttribute("aria-pressed", state.ctx===k);
+    b.innerHTML=`<span class="lab">${g.lab}</span>`;
+    b.onclick=()=>{state.ctx=k;renderGoal();updateNav();};
+    cx.appendChild(b);
+  });
+}
+
+function showStep(){
+  document.querySelectorAll(".step").forEach(s=>{ s.hidden = +s.dataset.step !== state.step; });
+  if(state.step===2) renderObs();
+  $("#prevBtn").style.visibility = state.step===0 ? "hidden":"visible";
+  $("#nextBtn").textContent = state.step===3 ? "Generar mi estrategia" : "Continuar";
+  renderSteps();updateNav();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function canProceed(){
+  if(state.step===0) return !!state.sex;
+  if(state.step===1) return !!state.sign;
+  if(state.step===2) return true;
+  if(state.step===3) return !!state.goal && !!state.ctx;
+  return false;
+}
+function updateNav(){ $("#nextBtn").disabled = !canProceed(); }
+
+$("#prevBtn").onclick=()=>{ if(state.step>0){state.step--;showStep();} };
+$("#nextBtn").onclick=()=>{
+  if(!canProceed())return;
+  if(state.step<3){state.step++;showStep();}
+  else generate();
+};
+
+/* ============================================================
+   MOTOR
+   ============================================================ */
+function computeTraits(){
+  const sign=SIGNS[state.sign];
+  const asc=state.asc?SIGNS[state.asc]:null;
+  const t={};AXES.forEach(a=>{
+    const sun=sign.traits[a]??45;
+    t[a]=asc?Math.round(sun*0.7+(asc.traits[a]??45)*0.3):sun;
+  });
+  state.obs.forEach(id=>{
+    const it=OBS_GROUPS.flatMap(g=>g.items).find(o=>o.id===id);
+    if(!it)return;
+    for(const k in it.d){ if(k in t) t[k]=Math.max(0,Math.min(100, t[k]+it.d[k])); }
+  });
+  return t;
+}
+function topTraits(t,n=3){
+  return RADAR.map(([k,l])=>({k,l,v:t[k]??0})).sort((a,b)=>b.v-a.v).slice(0,n);
+}
+function pronom(){ return SEX.find(s=>s.id===state.sex).pr; }
+
+/* Concordancia de género: {masculino|femenino} */
+function genderize(s){
+  if(s==null) return s;
+  const sex=SEX.find(x=>x.id===state.sex);
+  const fem= sex ? sex.pr.g==="f" : false;
+  return String(s).replace(/\{([^{}|]*)\|([^{}|]*)\}/g,(m,a,b)=> fem? b : a);
+}
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function pickOpeners(sign,t){
+  const ctx=state.ctx, tons=sign.tons;
+  const question=sign.questions[0];
+  const fill = s => s.replace("{question}",question);
+  const scoreTon=o=>o.tons.filter(x=>tons.includes(x)).length;
+  // mezcla + orden estable por afinidad de tono => variedad en cada generación
+  let pool=shuffle(OPENERS.filter(o=>o.ctx===ctx));
+  pool.sort((a,b)=>scoreTon(b)-scoreTon(a));
+  let out=pool.map(o=>fill(o.txt));
+  if(state.goal==="cafe" && !out.some(x=>/café/i.test(x))){
+    out.unshift("¿Y si seguimos esta plática con un café esta semana?");
+  }
+  return out.slice(0, Math.min(6, out.length));
+}
+
+function traitPhrase(top){
+  const map={
+    sensibilite:"una sensibilidad que se nota rápido",
+    sociabilite:"una soltura social evidente",
+    energie:"una energía que se nota",
+    intellect:"una mente que va rápido",
+    romantisme:"un fondo romántico que no esconde",
+    aventure:"unas ganas claras de aventura",
+    mystere:"un aire de misterio que intriga",
+    confiance:"una seguridad tranquila",
+    creativite:"una vena creativa",
+    independance:"una independencia real",
+  };
+  return top.map(x=>map[x.k]).filter(Boolean);
+}
+
+function generate(){
+  const sign=SIGNS[state.sign];
+  const asc=state.asc?SIGNS[state.asc]:null;
+  const t=computeTraits();
+  const pr=pronom();
+  const top=topTraits(t,3);
+
+  const obsLabels=[...state.obs].map(id=>{
+    const it=OBS_GROUPS.flatMap(g=>g.items).find(o=>o.id===id);return it?it.label.toLowerCase():null;
+  }).filter(Boolean);
+
+  // === Lectura detallada (el signo es la guía) ===
+  const sig4 = sign.signatures.slice(0,4).map(s=>s.charAt(0).toLowerCase()+s.slice(1)).join(" ; ");
+  const touche = sign.estSeduit.replace(/^Por\s+/i,"");
+  const top4 = traitPhrase(topTraits(t,4));
+  const lowerFirst = s => s.charAt(0).toLowerCase()+s.slice(1);
+  const paras=[];
+  paras.push(sign.personnalite);
+  if(asc){
+    const asc2=asc.signatures.slice(0,2).map(x=>x.charAt(0).toLowerCase()+x.slice(1)).join(" ; ");
+    paras.push(`A primera vista, por su ascendente en ${asc.nom}, proyecta otra capa: ${asc2}. Es lo que muestra antes de abrirse de verdad.`);
+  }
+  paras.push(`Lo que más ${pr.obj} define: ${sig4}.`);
+  paras.push(`En el fondo, ${pr.suj} valora: ${sign.valeurs.join(", ")}. Y lo que ${pr.obj} hace huir: ${sign.peurs.join(", ")}.`);
+  if(top4.length) paras.push(`Al observar, lo que más resalta en ${pr.suj}: ${top4.join(", ")}.`);
+  paras.push(`Lo que más ${pr.obj} conquista: ${lowerFirst(touche)}`);
+  paras.push(`Su forma de comunicarse: ${lowerFirst(sign.communication)}`);
+  if(obsLabels.length){
+    paras.push(`Tus observaciones (${obsLabels.slice(0,6).join(", ")}) ${obsLabels.length>=3?"encajan con el perfil y lo vuelven aún más preciso":"agregan un matiz útil al retrato"}.`);
+  }
+  const readingHTML = paras.map(x=>`<p class="prose" style="margin:0 0 10px">${x}</p>`).join("");
+
+  const openers=pickOpeners(sign,t);
+  const compliments=sign.compliments.slice(0,10);
+  const questions=[...sign.questions,
+    `¿Qué vas a hacer el fin?`,
+    `¿Cuál es tu película favorita?`,
+    `¿Te gusta bailar?`,
+    `¿Qué te pone de buenas?`,
+    `Si pudieras irte a cualquier lado mañana, ¿a dónde irías?`
+  ].slice(0,10);
+
+  const goalLab=GOALS[state.goal].lab.toLowerCase();
+  const ctxLab=CONTEXTS[state.ctx].lab;
+
+  const closer = {
+    glace:"Sigue tranquilo, disfruta el momento. No hay que correr.",
+    discussion:"Propón seguir luego: «¿Seguimos esta plática un día, con algo de tomar?»",
+    envie:"Cierra en buena nota: «Me encantó platicar contigo, hay que repetir.» Y deja con ganas de más.",
+    cafe:"Propón el café claro: «¿Te late que tomemos un café esta semana?» Da un día.",
+    seduire:"Pide su número con una sonrisa: «Dame tu número, me dieron ganas de volver a verte.»"
+  }[state.goal];
+  const interestSignals = `¿${pr.suj==="él"?"Él":"Ella"} te responde con una sonrisa, te hace preguntas, busca tu mirada o se queda cerca de ti? Buena señal. Avanza, pero tranquilo.`;
+
+  // === DOM ===
+  const r=$("#result");r.innerHTML="";r.className="reveal";
+
+  r.appendChild(buildHead(sign));
+  r.appendChild(buildRadarCard(t,top));
+
+  r.appendChild(block("La lectura","Perfil",
+    `<p class="prose muted" style="margin:0 0 12px">${pr.obj==="lo"?"Lo":"La"} observé por ti — esto es lo que leo:</p>${genderize(readingHTML)}`));
+
+  r.appendChild(listBlock("Rasgos distintivos del signo","Rasgos", sign.signatures, false));
+
+  r.appendChild(listBlock("Lo que probablemente le gusta","Afinidades", sign.attire, false));
+  r.appendChild(listBlock("Lo que mejor evitar","Errores", sign.eviter, true));
+
+  r.appendChild(block("Cómo llamar su atención","Estrategia",
+    `<p class="prose">${genderize(capitalize(sign.seduit))} ${sign.estSeduit?` ${genderize(capitalize(sign.estSeduit))}`:""}</p>
+     <p class="prose muted" style="margin-top:8px">Tu intención: <strong>${goalLab}</strong>, contexto <strong>${ctxLab}</strong>. Mantén un ritmo que respete su tempo — ${genderize(lowerFirst(sign.communication))}</p>`));
+
+  r.appendChild(listBlock("Lo que va a notar en ti","Señales", sign.remarque, false));
+
+  r.appendChild(block("Cumplidos a su medida","Cumplidos",
+    `<ol class="lines copylist">${compliments.map(copyLi).join("")}</ol>`));
+
+  const opCard=block("Frases para romper el hielo","Acercamiento",
+    `<ol class="lines copylist" id="openerList"></ol><button type="button" class="btn ghost shuffle-op" id="shuffleOp">↻ Ver otras frases</button>`);
+  r.appendChild(opCard);
+
+  r.appendChild(numBlock("Preguntas para que platique","Conversación", questions));
+
+  r.appendChild(block(`${pr.suj==="él"?"Si él":"Si ella"} parece interesad${pr.g==="x"?"":pr.obj==="la"?"a":"o"}`,"Impulso",
+    `<p class="prose">${interestSignals}</p>
+     <ul class="list" style="margin-top:12px">
+       <li>Quédate relajado, ya vas bien. No hace falta exagerar.</li>
+       <li>Retoma lo que ${pr.suj} dice, demuestra que sí escuchas.</li>
+       <li>Echa un cumplido sincero, uno solo, pero que pegue.</li>
+       <li>Deja algo de misterio, que le queden ganas de saber más.</li>
+       <li>Si fluye, propón un momento juntos antes de que se enfríe.</li>
+     </ul>
+     <p class="prose" style="margin-top:12px"><strong>El siguiente paso:</strong> ${closer}</p>`));
+
+  r.appendChild(block(`${pr.suj==="él"?"Si él":"Si ella"} se muestra distante`,"Salida",
+    `<p class="prose">¿Respuestas cortas, mirada en otro lado, poco entusiasmo? Es un no, y está bien. Retírate con una sonrisa: <em>«Estuvo padre platicar contigo, te dejo, ¡bonita noche!»</em> Quedas con clase y dejas la puerta abierta para después.</p>`));
+
+  const again=el("button","btn ghost restart","Empezar otra lectura");
+  again.type="button";again.onclick=reset;
+  r.appendChild(again);
+
+  $("#form").style.display="none";
+  $("#steps").style.display="none";
+  r.style.display="block";
+
+  CURRENT={sign,t,ctx:state.ctx};
+  renderOpeners(sign,t,state.ctx);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---- copiar ---- */
+function copyLi(text){
+  const g=genderize(text);
+  const esc=g.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+  return `<li><span class="ct">${g}</span><button type="button" class="copy" data-txt="${esc}">Copiar</button></li>`;
+}
+document.addEventListener("click", e=>{
+  const b=e.target.closest && e.target.closest(".copy"); if(!b) return;
+  const txt=b.getAttribute("data-txt");
+  const done=()=>{const old=b.textContent;b.textContent="¡Copiado!";b.classList.add("ok");setTimeout(()=>{b.textContent=old;b.classList.remove("ok");},1200);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopy(txt,done));}
+  else fallbackCopy(txt,done);
+});
+document.addEventListener("click", e=>{
+  const b=e.target.closest && e.target.closest("#shuffleOp"); if(!b||!CURRENT) return;
+  renderOpeners(CURRENT.sign,CURRENT.t,CURRENT.ctx);
+});
+function fallbackCopy(txt,cb){const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand("copy");}catch(e){}document.body.removeChild(ta);cb&&cb();}
+
+function renderOpeners(sign,t,ctx){
+  state.ctx=ctx;
+  const list=$("#openerList");if(!list)return;
+  list.innerHTML=pickOpeners(sign,t).map(copyLi).join("");
+}
+
+/* ---- helpers DOM ---- */
+function capitalize(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function buildHead(sign){
+  const h=el("div","res-head");
+  const asc=state.asc?SIGNS[state.asc]:null;
+  const ascHtml=asc?` · Asc ${asc.glyph} ${asc.nom}`:"";
+  h.innerHTML=`<div class="res-glyph">${sign.glyph}${asc?`<span style="opacity:.45;font-size:.7em"> / ${asc.glyph}</span>`:""}</div>
+    <div class="res-name">${sign.nom}</div>
+    <div class="res-meta">${sign.element} · ${sign.dates}${ascHtml}</div>`;
+  return h;
+}
+function block(title,ix,html){
+  const c=el("section","card block");
+  c.innerHTML=`<h3 class="b-title"><span class="ix">${ix}</span>${title}</h3>${html}`;
+  return c;
+}
+function listBlock(title,ix,items,avoid){
+  const ul=`<ul class="list${avoid?" avoid":""}">${items.map(i=>`<li>${genderize(capitalize(i))}</li>`).join("")}</ul>`;
+  return block(title,ix,ul);
+}
+function numBlock(title,ix,items){
+  const ol=`<ol class="lines">${items.map(i=>`<li>${genderize(capitalize(i))}</li>`).join("")}</ol>`;
+  return block(title,ix,ol);
+}
+function buildRadarCard(t,top){
+  const c=el("section","card");
+  c.innerHTML=`<div class="radar-wrap">${radarSVG(t)}</div>
+    <p class="radar-cap">${state.asc?`Mezcla Sol ${SIGNS[state.sign].glyph} + Ascendente ${SIGNS[state.asc].glyph} · `:"Su constelación — "}dominantes: ${top.map(x=>x.l.toLowerCase()).join(" · ")}</p>`;
+  return c;
+}
+
+function radarSVG(t){
+  const size=300, cx=size/2, cy=size/2+6, R=110;
+  const n=RADAR.length;
+  const pts=RADAR.map(([k,l],i)=>{
+    const ang=-Math.PI/2 + i*2*Math.PI/n;
+    const val=(t[k]??0)/100;
+    return {ang,val,l,
+      x:cx+Math.cos(ang)*R*val, y:cy+Math.sin(ang)*R*val,
+      lx:cx+Math.cos(ang)*(R+24), ly:cy+Math.sin(ang)*(R+24)};
+  });
+  let rings="";
+  [0.25,0.5,0.75,1].forEach(f=>{
+    const ring=RADAR.map(([k],i)=>{
+      const a=-Math.PI/2+i*2*Math.PI/n;
+      return `${(cx+Math.cos(a)*R*f).toFixed(1)},${(cy+Math.sin(a)*R*f).toFixed(1)}`;
+    }).join(" ");
+    rings+=`<polygon points="${ring}" fill="none" stroke="rgba(236,230,216,.08)" stroke-width="1"/>`;
+  });
+  let spokes="";
+  pts.forEach(p=>{spokes+=`<line x1="${cx}" y1="${cy}" x2="${(cx+Math.cos(p.ang)*R).toFixed(1)}" y2="${(cy+Math.sin(p.ang)*R).toFixed(1)}" stroke="rgba(236,230,216,.06)"/>`;});
+  const poly=pts.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+  let dots="",labels="";
+  pts.forEach(p=>{
+    dots+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.2" fill="#e6c884"/>`;
+    const anchor = Math.abs(Math.cos(p.ang))<0.3 ? "middle" : (Math.cos(p.ang)>0?"start":"end");
+    labels+=`<text x="${p.lx.toFixed(1)}" y="${(p.ly+4).toFixed(1)}" fill="#8b91a8" font-size="11" font-family="Inter,sans-serif" text-anchor="${anchor}">${p.l}</text>`;
+  });
+  return `<svg viewBox="-62 -6 ${size+124} ${size+22}" width="100%" style="max-width:380px" role="img" aria-label="Perfil de personalidad en radar">
+    ${rings}${spokes}
+    <polygon points="${poly}" fill="rgba(211,173,87,.16)" stroke="#d3ad57" stroke-width="1.5"/>
+    ${dots}${labels}
+  </svg>`;
+}
+
+function reset(){
+  state.step=0;state.sex=null;state.sign=null;state.asc=null;state.obs=new Set();state.goal=null;state.ctx=null;
+  $("#result").style.display="none";
+  $("#form").style.display="block";
+  $("#steps").style.display="flex";
+  $("#obsCount").textContent="0 marcado";
+  renderSex();renderSigns();renderAsc();renderObs();renderGoal();showStep();
+}
+
+renderSex();renderSigns();renderAsc();renderObs();renderGoal();showStep();
+</script>
+</body>
+</html>
+
 
