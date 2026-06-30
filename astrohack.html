@@ -74,10 +74,13 @@
   .obs-group{margin:0 0 18px}
   .obs-group h4{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--peri-soft);font-weight:600;margin:0 0 10px}
   .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{cursor:pointer;user-select:none;font-size:14px;background:var(--surface-2);border:1px solid var(--line-soft);color:var(--muted);padding:10px 15px;border-radius:999px;transition:.15s;min-height:40px;display:inline-flex;align-items:center}
+  .chip{cursor:pointer;user-select:none;font-size:14px;background:var(--surface-2);border:1px solid var(--line-soft);color:var(--muted);padding:10px 15px;border-radius:999px;transition:.15s;min-height:40px;display:inline-flex;align-items:center;gap:6px}
   .chip:hover{color:var(--ink);border-color:var(--line)}
-  .chip[aria-pressed="true"]{background:rgba(124,136,214,.16);border-color:rgba(124,136,214,.5);color:var(--peri-soft)}
-  .obs-count{font-size:12.5px;color:var(--muted-2);margin-top:6px}
+  .chip:active{transform:scale(.95)}
+  .chip[aria-pressed="true"]{background:linear-gradient(180deg,rgba(211,173,87,.22),rgba(211,173,87,.08));border-color:var(--gold);color:var(--ink);font-weight:600;box-shadow:0 0 0 1px rgba(211,173,87,.45),0 6px 18px -8px rgba(211,173,87,.55);transform:translateY(-1px)}
+  .chip[aria-pressed="true"]::before{content:"✓";color:var(--gold);font-weight:700;font-size:13px;line-height:1}
+  .obs-count{font-size:13px;color:var(--muted-2);margin-top:10px;transition:.15s}
+  .obs-count.has{color:var(--gold-soft);font-weight:600}
 
   .nav{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
   button.btn{cursor:pointer;font:inherit;font-weight:600;font-size:14.5px;letter-spacing:.01em;border-radius:11px;padding:13px 22px;border:1px solid transparent;transition:.18s}
@@ -98,6 +101,7 @@
   .b-title .ix{font-family:"Inter",sans-serif;font-size:11px;letter-spacing:.12em;color:var(--gold);border:1px solid var(--line);border-radius:6px;padding:3px 7px;font-weight:600}
   .prose{color:var(--ink);font-size:15px}
   .prose.muted{color:var(--muted)}
+  .prose.cierre{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:16.5px;line-height:1.5;color:var(--gold-soft)}
   ul.list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
   ul.list li{position:relative;padding-left:22px;font-size:14.5px;color:var(--ink)}
   ul.list li::before{content:"";position:absolute;left:4px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--gold)}
@@ -217,7 +221,7 @@ const SIGNS = {
     attire:["una presencia firme","el humor que le sigue el juego","un poco de reto","ritmo"],
     eviter:["la duda","los mensajes flojos y eternos","esperar demasiado para proponer","los celos pegajosos"],
     remarque:["tu seguridad","tu energía","si te atreves o no","tu independencia"],
-    compliments:["Tienes una energía que contagia, de verdad.","Me gusta que digas las cosas de frente.","Contigo uno no se aburre, se nota al toque.","Tienes carácter, y eso me gusta.","Te avientas en la vida, me encanta.","Tienes una sonrisa que despierta a cualquiera.","Sabes lo que quieres, y eso atrae.","Eres de l{os|as} que se atreven, y eso cambia.","Hay una fuerza en ti que se siente.","Dan ganas de moverse contigo."],
+    compliments:["Tienes una energía que contagia, de verdad.","Me gusta que digas las cosas de frente.","Te avientas en la vida, me encanta.","Sabes lo que quieres, y eso atrae.","Eres de l{os|as} que se atreven, y eso cambia.","Hay una fuerza en ti que se siente."],
     questions:["¿Qué haces para divertirte?","¿Eres más de deporte o de tranquilidad?","¿Cuál es tu sueño ahorita?","¿Prefieres salir o quedarte en casa?","¿Qué es lo último divertido que hiciste?"]},
 
   taureau:{nom:"Tauro",glyph:"♉",dates:"20 abr – 20 may",element:"Tierra",tons:["chaleureux","sincere","sensuel"],
@@ -232,7 +236,7 @@ const SIGNS = {
     attire:["la dulzura","un ambiente cuidado","la paciencia","alguien confiable"],
     eviter:["las prisas","los planes de último minuto","demasiada intensidad de golpe","la falta de confianza"],
     remarque:["tu presencia tranquila","el cuidado de tus detalles","tu coherencia","tu voz"],
-    compliments:["Tienes una dulzura que hace bien.","Contigo uno se siente tranquilo.","Me gusta tu calma, relaja.","Tienes una sonrisa que reconforta.","Te ves como alguien confiable.","Uno se siente segur{o|a} contigo.","Tienes buen gusto, se nota.","Estás guap{o|a}, te lo tenía que decir.","Me gusta que te tomes tu tiempo.","Hay algo cálido en ti."],
+    compliments:["Tienes una dulzura que hace bien.","Me gusta tu calma, relaja.","Te ves como alguien confiable.","Tienes buen gusto, se nota.","Estás guap{o|a}, te lo tenía que decir.","Me gusta que te tomes tu tiempo."],
     questions:["¿Cuál es tu comida favorita?","¿Qué haces para relajarte?","¿Prefieres playa o montaña?","¿Cuál es tu lugar favorito?","¿Te gusta cocinar?"]},
 
   gemeaux:{nom:"Géminis",glyph:"♊",dates:"21 may – 20 jun",element:"Aire",tons:["joueur","intellectuel","complice"],
@@ -247,7 +251,7 @@ const SIGNS = {
     attire:["el ingenio","el humor","la novedad","una plática que rebota"],
     eviter:["las preguntas planas y cerradas","los mensajes muy intensos muy rápido","la posesividad","la pesadez"],
     remarque:["tu chispa para responder","cómo manejas las palabras","si {lo|la} haces reír","tu curiosidad"],
-    compliments:["Me haces reír, me encanta.","Contigo se puede hablar de todo.","Siempre tienes una historia que contar.","Eres rápid{o|a}, eso lo hace divertido.","Contigo el tiempo se va volando.","Tienes una sonrisa, en serio.","Me gusta tu buena vibra.","Haces todo más ligero.","Contigo nunca es aburrido, eso es raro.","Tienes una energía que saca sonrisas."],
+    compliments:["Me haces reír, me encanta.","Contigo se puede hablar de todo.","Siempre tienes una historia que contar.","Eres rápid{o|a}, eso lo hace divertido.","Contigo el tiempo se va volando.","Contigo nunca es aburrido, eso es raro."],
     questions:["¿Qué haces en tus días?","¿Cuál es tu música favorita?","¿Prefieres mensajes o llamadas?","¿Qué te hace reír?","¿Te gusta salir los fines?"]},
 
   cancer:{nom:"Cáncer",glyph:"♋",dates:"21 jun – 22 jul",element:"Agua",tons:["chaleureux","sincere","complice"],
@@ -262,7 +266,7 @@ const SIGNS = {
     attire:["la dulzura","la escucha sincera","la estabilidad emocional","la ternura"],
     eviter:["la ironía fría","dar calor y luego frialdad","apurar la intimidad","minimizar sus emociones"],
     remarque:["tu calidez","si de verdad escuchas","tu constancia","cómo hablas de tus seres queridos"],
-    compliments:["Tienes un gran corazón, se nota.","Haces sentir cómod{o|a} a la gente al instante.","Me gusta tu dulzura.","Escuchas de verdad, y eso se agradece.","Tienes una sonrisa que tranquiliza.","Se ve que cuidas a la gente.","Hay una ternura real en ti.","Dan ganas de confiar en ti.","Tienes algo que reconforta.","Se está bien a tu lado, así de simple."],
+    compliments:["Tienes un gran corazón, se nota.","Haces sentir cómod{o|a} a la gente al instante.","Escuchas de verdad, y eso se agradece.","Se ve que cuidas a la gente.","Hay una ternura real en ti.","Dan ganas de confiar en ti."],
     questions:["¿Eres cercan{o|a} a tu familia?","¿Qué te pone de buenas?","¿Qué haces cuando necesitas despejarte?","¿Cuál es tu mejor recuerdo de niñ{o|a}?","¿Tienes mascotas?"]},
 
   lion:{nom:"Leo",glyph:"♌",dates:"23 jul – 22 ago",element:"Fuego",tons:["audacieux","chaleureux","sincere"],
@@ -277,7 +281,7 @@ const SIGNS = {
     attire:["una admiración sincera","la presencia","la generosidad","alguien que también brilla"],
     eviter:["la adulación hueca","opacarlo en público","la indiferencia","la mezquindad"],
     remarque:["tu seguridad","tu estilo","si tú también brillas","tu generosidad"],
-    compliments:["Tienes una presencia que se nota al entrar.","Iluminas el lugar, es verdad.","Tienes una sonrisa increíble.","Das mucho a la gente, se siente.","Tienes clase.","Haces sentir segura a la gente.","Tienes encanto, es claro.","Dan ganas de estar contigo.","Tienes algo especial, de verdad.","Brillas, y da gusto verlo."],
+    compliments:["Tienes una presencia que se nota al entrar.","Iluminas el lugar, es verdad.","Das mucho a la gente, se siente.","Tienes encanto, es claro.","Tienes algo especial, de verdad.","Brillas, y da gusto verlo."],
     questions:["¿Cuál es tu pasión?","¿Qué haces para divertirte?","¿Cuál es tu recuerdo más bonito?","¿Te gusta bailar?","¿Cuál es tu sueño?"]},
 
   vierge:{nom:"Virgo",glyph:"♍",dates:"23 ago – 22 sep",element:"Tierra",tons:["intellectuel","sincere","complice"],
@@ -292,7 +296,7 @@ const SIGNS = {
     attire:["la atención al detalle","la confianza","una mente despierta","la atención real"],
     eviter:["la exageración","los cumplidos genéricos","el desorden","las promesas al aire"],
     remarque:["tu precisión","si escuchas los detalles","tu coherencia","tu calma"],
-    compliments:["Tienes una sonrisa bonita, discreta pero linda.","Me gusta que cuides los detalles.","Se nota que se puede contar contigo.","Te cuidas, se nota.","Tienes una calma que gusta.","Piensas más de lo que muestras, y eso atrae.","Me gusta cómo escuchas.","Tienes clase, sin exagerar.","Haces las cosas bien, eso es raro.","Se ve que eres buena persona."],
+    compliments:["Me gusta que cuides los detalles.","Se nota que se puede contar contigo.","Te cuidas, se nota.","Piensas más de lo que muestras, y eso atrae.","Me gusta cómo escuchas.","Tienes clase, sin exagerar."],
     questions:["¿A qué te dedicas?","¿Eres más de orden o de desorden?","¿Qué te relaja?","¿Te gusta aprender cosas nuevas?","¿Cuál es tu gustito personal?"]},
 
   balance:{nom:"Libra",glyph:"♎",dates:"23 sep – 22 oct",element:"Aire",tons:["chaleureux","complice","intellectuel"],
@@ -307,7 +311,7 @@ const SIGNS = {
     attire:["la elegancia","el encanto","la armonía","una linda plática"],
     eviter:["la brusquedad","el conflicto sin sentido","la vulgaridad","forzar una decisión rápida"],
     remarque:["tu elegancia","cómo pones el ambiente","tu delicadeza","tu buen gusto"],
-    compliments:["Tienes un encanto increíble.","Contigo todo es más agradable.","Tienes una sonrisa preciosa.","Me gusta tu dulzura.","Tienes clase de manera natural.","Uno se siente bien al platicar contigo.","Tienes buen gusto, se nota.","Hay algo dulce en ti.","Pones buena vibra.","Estás guap{o|a}, te lo tenía que decir."],
+    compliments:["Tienes un encanto increíble.","Contigo todo es más agradable.","Tienes clase de manera natural.","Uno se siente bien al platicar contigo.","Tienes buen gusto, se nota.","Pones buena vibra."],
     questions:["¿Cuál es tu salida ideal?","¿Qué tipo de música te gusta?","¿Prefieres cine o restaurante?","¿Cuál es un lugar que te parece bonito?","¿Eres más de fiesta o de noche tranquila?"]},
 
   scorpion:{nom:"Escorpio",glyph:"♏",dates:"23 oct – 21 nov",element:"Agua",tons:["sensuel","sincere","audacieux"],
@@ -322,7 +326,7 @@ const SIGNS = {
     attire:["la autenticidad","la profundidad","una presencia firme","un misterio real"],
     eviter:["la mentira, aunque sea chica","lo superficial","jugar con doble cara","traicionar la confianza"],
     remarque:["tu mirada","si eres real","lo que escondes","tu intensidad"],
-    compliments:["Tienes una mirada que dice mucho.","Hay algo magnético en ti.","Me gusta que no finjas.","Tienes una presencia fuerte, atrae.","Contigo uno siente que sí importa.","Tienes un lado misterioso que gusta.","Eres intens{o|a}, y eso me gusta.","Dan ganas de conocerte de verdad.","Tienes algo que no se olvida.","No eres como los demás, se siente."],
+    compliments:["Tienes una mirada que dice mucho.","Hay algo magnético en ti.","Me gusta que no finjas.","Tienes un lado misterioso que gusta.","Eres intens{o|a}, y eso me gusta.","Tienes algo que no se olvida."],
     questions:["¿Qué es algo que poca gente sabe de ti?","¿Confías fácil en la gente?","¿Qué te atrae de alguien?","¿Te van las cosas intensas o tranquilas?","¿Cuál es tu mayor pasión?"]},
 
   sagittaire:{nom:"Sagitario",glyph:"♐",dates:"22 nov – 21 dic",element:"Fuego",tons:["joueur","audacieux","intellectuel"],
@@ -337,7 +341,7 @@ const SIGNS = {
     attire:["la libertad","la aventura","el optimismo","las ganas de descubrir"],
     eviter:["la posesividad","los planes demasiado cerrados muy rápido","la pesadez","la espera pegajosa"],
     remarque:["tu independencia","tu humor","tus ganas de más mundo","tu optimismo"],
-    compliments:["Tienes unas ganas de vivir que contagian.","Me gusta tu sinceridad.","Contigo uno se ríe, seguro.","Se ve que has vivido un montón.","Tienes una risa, me encanta.","Dan ganas de salir de aventura contigo.","Siempre andas de buenas, y eso hace bien.","Tienes una energía positiva, se siente.","Contigo nunca es aburrido.","Se te ve libre, y te queda bien."],
+    compliments:["Tienes unas ganas de vivir que contagian.","Me gusta tu sinceridad.","Contigo uno se ríe, seguro.","Se ve que has vivido un montón.","Dan ganas de salir de aventura contigo.","Se te ve libre, y te queda bien."],
     questions:["¿Te gusta viajar? ¿A dónde sueñas ir?","¿Qué es lo más loco que has hecho?","¿Qué haces para divertirte?","¿Eres más de aventura o de tranquilidad?","¿Cuál es tu sueño?"]},
 
   capricorne:{nom:"Capricornio",glyph:"♑",dates:"22 dic – 19 ene",element:"Tierra",tons:["sincere","intellectuel","sensuel"],
@@ -352,7 +356,7 @@ const SIGNS = {
     attire:["la seriedad","la ambición","la paciencia","la madurez"],
     eviter:["la inmadurez","las prisas","las promesas no cumplidas","el puro show"],
     remarque:["tu seriedad","si cumples tu palabra","tu ambición","tu reserva elegante"],
-    compliments:["Tienes una calma que tranquiliza.","Se nota que eres alguien sólid{o|a}.","Me gusta tu seriedad.","Tienes ambición, se nota.","Tienes una sonrisa bonita, y hay que ganársela.","Te ves como alguien confiable.","Tienes clase.","Se puede contar contigo, se siente.","Avanzas en la vida, y te queda bien.","Tienes una presencia tranquila, me gusta."],
+    compliments:["Se nota que eres alguien sólid{o|a}.","Me gusta tu seriedad.","Tienes ambición, se nota.","Tienes una sonrisa bonita, y hay que ganársela.","Se puede contar contigo, se siente.","Avanzas en la vida, y te queda bien."],
     questions:["¿A qué te dedicas?","¿Cuáles son tus planes ahorita?","¿Qué haces para relajarte?","¿Cuál es tu mayor sueño?","¿Tienes planes grandes para más adelante?"]},
 
   verseau:{nom:"Acuario",glyph:"♒",dates:"20 ene – 18 feb",element:"Aire",tons:["intellectuel","joueur","complice"],
@@ -367,7 +371,7 @@ const SIGNS = {
     attire:["la originalidad","la independencia","las ideas nuevas","la mente abierta"],
     eviter:["la posesividad","lo convencional","las preguntas banales","la presión emocional rápida"],
     remarque:["tu singularidad","tus ideas","si respetas su espacio","tu apertura"],
-    compliments:["No eres como todos, me encanta.","Tienes ideas que se salen de lo común.","Contigo se habla de cosas interesantes.","Se te ve libre, se siente.","Tienes un lado único que atrae.","Me gusta tu curiosidad.","Tienes una sonrisa buena onda y real.","Tienes un estilo aparte, y eso cambia.","Contigo no hay aburrimiento.","Tienes algo distinto, y eso gusta."],
+    compliments:["No eres como todos, me encanta.","Tienes ideas que se salen de lo común.","Contigo se habla de cosas interesantes.","Tienes un lado único que atrae.","Me gusta tu curiosidad.","Tienes un estilo aparte, y eso cambia."],
     questions:["¿Cuál es tu pasión medio rara?","¿Qué haces distinto a los demás?","¿Qué te interesa ahorita?","¿Te gusta la tecnología, lo nuevo?","¿Cuál es tu sueño un poco loco?"]},
 
   poissons:{nom:"Piscis",glyph:"♓",dates:"19 feb – 20 mar",element:"Agua",tons:["sincere","chaleureux","sensuel"],
@@ -382,7 +386,7 @@ const SIGNS = {
     attire:["la dulzura","la poesía","la sensibilidad","una conexión profunda"],
     eviter:["la dureza","el cinismo","minimizar sus emociones","demasiada frialdad racional"],
     remarque:["tu dulzura","tu sensibilidad","si entiendes sin que te expliquen","tu imaginación"],
-    compliments:["Tienes una dulzura que toca.","Parece que entiendes todo sin que se diga.","Tienes una mirada llena de ternura.","Me gusta tu lado soñador.","Tienes un gran corazón, se nota.","Escuchas de verdad, y eso se agradece.","Tienes algo que calma.","Se te ve sensible, y eso es bonito.","Tienes una bella alma, se siente.","Se está bien a tu lado."],
+    compliments:["Tienes una dulzura que toca.","Parece que entiendes todo sin que se diga.","Tienes una mirada llena de ternura.","Me gusta tu lado soñador.","Se te ve sensible, y eso es bonito.","Tienes una bella alma, se siente."],
     questions:["¿Cuál es una película o canción que ames?","¿Con qué sueñas ahorita?","¿Qué te conmueve de la gente?","¿Te gusta el arte o la música?","¿Qué haces cuando estás triste para sentirte mejor?"]}
 };
 
@@ -438,10 +442,62 @@ const OBS_GROUPS = [
 ];
 
 /* ---------- Sexo / pronombres ---------- */
+/* Insight táctico por observación — afina la lectura según lo que observaste */
+const OBS_INSIGHT = {
+  souriante:"Esa sonrisa fácil es una invitación: respóndele con ligereza, no con intensidad de golpe.",
+  timide:"Como l{o|a} notaste tímid{o|a}, acércate en corto y sin público; en lo íntimo se suelta.",
+  reserve:"Es reservad{o|a}: no llenes los silencios, deja que se abra a su ritmo y se sentirá segur{o|a}.",
+  extraverti:"Con esa chispa social, destácate siendo real; le aburre quien solo le sigue la corriente.",
+  introverti:"Prefiere lo tranquilo: un mensaje pensado vale más que veinte sueltos.",
+  calme:"Esa calma pide a alguien que no la sature: ritmo suave, sin bombardear de mensajes.",
+  stresse:"Si l{o|a} viste tens{o|a}, baja el ritmo; una presencia que relaja atrae más que mil frases.",
+  charismatique:"Con ese carisma seguro tiene opciones: gana con autenticidad, nunca siendo uno más que l{o|a} adula.",
+  leader:"Le gusta llevar la batuta: propón, pero déjale espacio para decidir.",
+  independant:"Marca su independencia: muestra que tú también tienes tu vida; eso atrae más que estar siempre disponible.",
+  mysterieux:"Ese misterio no es casualidad: no preguntes de más, deja que te revele cosas poco a poco.",
+  drole:"Le va el humor: engánchal{o|a} jugando, no a punta de intensidad.",
+  elegant:"Aprecia los detalles, no solo lo obvio; y cuida tu propia presentación.",
+  coquette:"Se arregla y le importa: un cumplido específico sobre un detalle pega más que uno genérico.",
+  sportive:"Comparte su energía: una propuesta activa (caminar, moverse) funciona mejor que un café sentado.",
+  sensuelle:"Esa sensualidad responde al ambiente: cuida la música, la luz y la distancia justa.",
+  discrete:"Es discret{o|a}: nada de exponerl{o|a} en público; lo sutil le llega más.",
+  naturelle:"Valora lo natural: muéstrate tal cual, sin pose; detecta lo forzado al instante.",
+  intellectuelle:"Aliméntale la mente: una idea o una buena pregunta valen más que un cumplido al físico.",
+  creative:"Pregúntale qué crea o qué le inspira: ahí se enciende y baja la guardia.",
+  spirituelle:"Conecta por lo profundo: una charla con sentido le importa más que la cháchara.",
+  ambitieuse:"Respeta sus metas y su tiempo: admira lo que construye en vez de competir con ello.",
+  romantique:"Su lado romántico pide intención: lo simbólico y los gestos le llegan más que lo caro.",
+  aventureuse:"Ofrécele algo nuevo: una propuesta con un toque de aventura le dice más que la rutina.",
+  protectrice:"Tiene instinto de cuidar: déjal{o|a} cuidar un poco, pero muéstrale que tú también sabes.",
+  curieuse:"Su curiosidad es la puerta: lánzale algo intrigante y querrá saber más.",
+  perfectionniste:"Cuida los detalles contigo: lo descuidado o lo impreciso le baja puntos.",
+  famille:"La familia le pesa: hablar con respeto de los tuyos suma sin que lo notes.",
+  animaux:"Si tiene mascota, es tema seguro: pregúntale por ella y se le ilumina la cara.",
+  voyage:"Le mueve viajar: pregúntale por su próximo destino soñado y se suelta sol{o|a}.",
+  musique:"La música es su hilo: descubre qué escucha y tendrás conversación para rato.",
+  lecture:"Lee: una recomendación sincera de libro vale más que mil halagos.",
+  cinema:"El cine le da tema: una peli en común rompe el hielo fácil.",
+  nature:"La naturaleza le recarga: una caminata al aire libre gana a un bar ruidoso.",
+  fete:"Le gusta salir: propón ambiente y movimiento, ahí l{o|a} ves brillar.",
+  bienetre:"Cuida su equilibrio: respeta sus rutinas de bienestar, no las invadas.",
+  art:"El arte le habla: una expo o algo creativo es una cita que l{o|a} intriga.",
+  cuisine:"Le gusta la cocina: proponer cocinar o un buen lugar para comer es terreno ganado.",
+  mode:"Le importa la imagen: notar un detalle de su estilo pega más que un 'estás guap{o|a}' genérico.",
+};
+
 const SEX = [
   {id:"f",lab:"Mujer",pr:{suj:"ella",obj:"la",pos:"su",g:"f"}},
   {id:"h",lab:"Hombre",pr:{suj:"él",obj:"lo",pos:"su",g:"m"}},
 ];
+
+/* Consejo táctico según la intención elegida */
+const GOAL_TIPS = {
+  glace:"Tu jugada: rompe el hielo ligero. Una sola frase y una sonrisa bastan — hoy no busques cerrar nada, solo abrir la puerta.",
+  discussion:"Tu jugada: haz que platique. Lanza una pregunta abierta sobre algo que le importe y deja que hable; tú escucha más de lo que dices.",
+  envie:"Tu jugada: deja con ganas de más. Di algo intrigante, no lo cuentes todo, y retírate antes de agotar el tema.",
+  cafe:"Tu jugada: lleva al café. Tras 2 o 3 mensajes con buena vibra, propón día y lugar concretos, sin rodeos ni '¿y si algún día...?'.",
+  seduire:"Tu jugada: muestra interés con calma. Un cumplido sincero, presencia, y deja espacio — la seguridad tranquila atrae más que la insistencia.",
+};
 
 const GOALS = {
   glace:{lab:"Romper el hielo",small:"un primer contacto ligero"},
@@ -461,6 +517,22 @@ const CONTEXTS = {
 };
 
 /* ---------- Frases de acercamiento (por contexto + tono) ---------- */
+/* Frase de cierre — el remate de la lectura, por signo (acordado en género) */
+const CIERRE = {
+  belier:"En una frase: puro impulso — lo que arranca con fuerza, le habla.",
+  taureau:"En una frase: terc{o|a} y sensorial — gánatelo con calma, confort y constancia, nunca a las prisas.",
+  gemeaux:"En una frase: mente veloz que odia el aburrimiento — sorpréndel{o|a} o l{o|a} pierdes.",
+  cancer:"En una frase: un corazón que se protege, pero que se entrega entero cuando confía.",
+  lion:"En una frase: nació para brillar — con admiración sincera, l{o|a} tienes.",
+  vierge:"En una frase: lo observa todo — conquista con detalles reales, nunca con promesas al aire.",
+  balance:"En una frase: vive por la armonía — el encanto y la belleza del momento le abren la puerta.",
+  scorpion:"En una frase: intens{o|a} y sin máscaras — o entras de verdad, o no entras.",
+  sagittaire:"En una frase: alma libre — ofrécele aventura, nunca una jaula.",
+  capricorne:"En una frase: construye a largo plazo — gánate su respeto con seriedad y paciencia.",
+  verseau:"En una frase: original e independiente — intrígal{o|a} con ideas y respeta su espacio.",
+  poissons:"En una frase: pura sensibilidad — toca su corazón y su imaginación, y es tuy{o|a}.",
+};
+
 const OPENERS = [
   // INSTAGRAM
   {ctx:"instagram",tons:["joueur","complice"],txt:"Vi tu perfil y me sacó una sonrisa. Quería venir a saludarte."},
@@ -604,12 +676,19 @@ function renderObs(){
       ch.onclick=()=>{
         state.obs.has(it.id)?state.obs.delete(it.id):state.obs.add(it.id);
         ch.setAttribute("aria-pressed", state.obs.has(it.id));
-        $("#obsCount").textContent=`${state.obs.size} marcado${state.obs.size>1?"s":""}`;
+        updateObsCount();
       };
       chips.appendChild(ch);
     });
     wrap.appendChild(chips);area.appendChild(wrap);
   });
+  updateObsCount();
+}
+function updateObsCount(){
+  const oc=$("#obsCount");if(!oc)return;
+  const n=state.obs.size;
+  oc.textContent=`${n} marcado${n>1?"s":""}`;
+  oc.classList.toggle("has",n>0);
 }
 
 function renderGoal(){
@@ -744,30 +823,27 @@ function generate(){
   if(top4.length) paras.push(`Al observar, lo que más resalta en ${pr.suj}: ${top4.join(", ")}.`);
   paras.push(`Lo que más ${pr.obj} conquista: ${lowerFirst(touche)}`);
   paras.push(`Su forma de comunicarse: ${lowerFirst(sign.communication)}`);
-  if(obsLabels.length){
-    paras.push(`Tus observaciones (${obsLabels.slice(0,6).join(", ")}) ${obsLabels.length>=3?"encajan con el perfil y lo vuelven aún más preciso":"agregan un matiz útil al retrato"}.`);
-  }
-  const readingHTML = paras.map(x=>`<p class="prose" style="margin:0 0 10px">${x}</p>`).join("");
+  // Insights personalizados según lo observado (precisión sobre la persona)
+  const insights=[];
+  for(const g of OBS_GROUPS) for(const it of g.items){ if(state.obs.has(it.id) && OBS_INSIGHT[it.id]) insights.push(OBS_INSIGHT[it.id]); }
+  insights.slice(0,3).forEach(x=>paras.push(x));
+  let readingHTML = paras.map(x=>`<p class="prose" style="margin:0 0 10px">${x}</p>`).join("");
+  const ascCierre = asc ? ` Y de entrada, lo primero que verás es su ascendente ${asc.nom}.` : "";
+  readingHTML += `<p class="prose cierre">${CIERRE[state.sign]}${ascCierre}</p>`;
 
   const openers=pickOpeners(sign,t);
-  const compliments=sign.compliments.slice(0,10);
-  const questions=[...sign.questions,
-    `¿Qué vas a hacer el fin?`,
-    `¿Cuál es tu película favorita?`,
-    `¿Te gusta bailar?`,
-    `¿Qué te pone de buenas?`,
-    `Si pudieras irte a cualquier lado mañana, ¿a dónde irías?`
-  ].slice(0,10);
+  const compliments=sign.compliments.slice(0,6);
+  const questions=sign.questions;  // solo las preguntas ligadas al signo
 
   const goalLab=GOALS[state.goal].lab.toLowerCase();
   const ctxLab=CONTEXTS[state.ctx].lab;
 
   const closer = {
-    glace:"Sigue tranquilo, disfruta el momento. No hay que correr.",
-    discussion:"Propón seguir luego: «¿Seguimos esta plática un día, con algo de tomar?»",
-    envie:"Cierra en buena nota: «Me encantó platicar contigo, hay que repetir.» Y deja con ganas de más.",
-    cafe:"Propón el café claro: «¿Te late que tomemos un café esta semana?» Da un día.",
-    seduire:"Pide su número con una sonrisa: «Dame tu número, me dieron ganas de volver a verte.»"
+    glace:"Abriste la puerta y se abrió. Cierra ligero y déjala con buena impresión: «Me cayó increíble platicar contigo.» Volverás con ventaja.",
+    discussion:"Aterriza la plática en algo concreto antes de despedirte: «Oye, esto hay que seguirlo otro día con calma. ¿Te late?»",
+    envie:"Déjalo picado y vete tú primero: «Me la pasé increíble, pero ya me tengo que ir… seguimos pronto.» Que se quede con ganas.",
+    cafe:"Hay luz verde: propón sin titubear, con día y hora. «¿Te late un café el jueves?» Los 'algún día' no cierran; una fecha sí.",
+    seduire:"Pide el contacto con seguridad y una sonrisa, sin pedir permiso: «Dame tu número, me dieron ganas de volver a verte.»"
   }[state.goal];
   const interestSignals = `¿${pr.suj==="él"?"Él":"Ella"} te responde con una sonrisa, te hace preguntas, busca tu mirada o se queda cerca de ti? Buena señal. Avanza, pero tranquilo.`;
 
@@ -787,7 +863,7 @@ function generate(){
 
   r.appendChild(block("Cómo llamar su atención","Estrategia",
     `<p class="prose">${genderize(capitalize(sign.seduit))} ${sign.estSeduit?` ${genderize(capitalize(sign.estSeduit))}`:""}</p>
-     <p class="prose muted" style="margin-top:8px">Tu intención: <strong>${goalLab}</strong>, contexto <strong>${ctxLab}</strong>. Mantén un ritmo que respete su tempo — ${genderize(lowerFirst(sign.communication))}</p>`));
+     <p class="prose muted" style="margin-top:8px">${GOAL_TIPS[state.goal]} Y respeta su ritmo: ${genderize(lowerFirst(sign.communication))}</p>`));
 
   r.appendChild(listBlock("Lo que va a notar en ti","Señales", sign.remarque, false));
 
@@ -930,5 +1006,4 @@ renderSex();renderSigns();renderAsc();renderObs();renderGoal();showStep();
 </script>
 </body>
 </html>
-
 
