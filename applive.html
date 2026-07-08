@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Selymna · Compatibilidad Amorosa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#0B1026;
+    --night-2:#141A38;
+    --panel:rgba(28,36,72,.55);
+    --gold:#D4A64B;
+    --gold-bright:#F4E0A8;
+    --cream:#F4EFE1;
+    --rose:#C97B84;
+    --muted:#8A93B8;
+    --line:rgba(212,166,75,.28);
+    --ring-track:rgba(138,147,184,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Montserrat',system-ui,sans-serif;
+    color:var(--cream);
+    background:#000;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    overflow-x:hidden;
+    position:relative;
+    padding:clamp(18px,4vh,40px) clamp(16px,4vw,40px) 0;
+  }
+  /* cosmic backdrop confined to the top, fading to pure black so the lower
+     area is a clean runway to slide the app up under TikTok's comment UI */
+  .skyfade{
+    position:fixed;top:0;left:0;right:0;height:80vh;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(120% 70% at 50% -8%, rgba(201,123,132,.16), transparent 55%),
+      linear-gradient(180deg, var(--night) 0%, var(--night) 46%, #060814 74%, transparent 100%);
+  }
+  /* starfield */
+  .stars{position:fixed;inset:0;pointer-events:none;z-index:0;
+    -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 48%,transparent 70%);
+    mask-image:linear-gradient(180deg,#000 0%,#000 48%,transparent 70%)}
+  .stars::before,.stars::after{
+    content:"";position:absolute;inset:0;
+    background-image:
+      radial-gradient(1.5px 1.5px at 20% 30%, rgba(244,224,168,.9), transparent),
+      radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1.5px 1.5px at 85% 60%, rgba(244,224,168,.7), transparent),
+      radial-gradient(1px 1px at 35% 75%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 55% 45%, rgba(244,224,168,.6), transparent),
+      radial-gradient(1.5px 1.5px at 10% 80%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 90% 88%, rgba(244,224,168,.5), transparent),
+      radial-gradient(1px 1px at 45% 12%, rgba(255,255,255,.6), transparent);
+    background-repeat:no-repeat;
+  }
+  .stars::after{opacity:.5;animation:twinkle 5.5s ease-in-out infinite}
+  @keyframes twinkle{0%,100%{opacity:.25}50%{opacity:.7}}
+
+  .card{
+    position:relative;z-index:1;
+    width:min(560px,100%);
+    text-align:center;
+    display:flex;flex-direction:column;
+    gap:clamp(14px,3.2vh,26px);
+    padding-bottom:62vh; /* black runway: slide the app up to align Casa Selymna */
+  }
+
+  .eyebrow{
+    font-family:'Cinzel',serif;
+    letter-spacing:.42em;
+    font-size:clamp(.62rem,2vw,.78rem);
+    color:var(--gold);
+    text-indent:.42em;
+    opacity:.9;
+  }
+  .title{
+    font-family:'Cinzel',serif;
+    font-weight:600;
+    font-size:clamp(1.5rem,6.5vw,2.35rem);
+    line-height:1.05;
+    color:var(--gold-bright);
+    text-shadow:0 0 26px rgba(212,166,75,.25);
+  }
+  .title .amp{display:block;font-size:.5em;letter-spacing:.3em;color:var(--rose);margin-top:.4em;font-weight:500}
+
+  /* inputs */
+  .duo{
+    display:flex;gap:clamp(10px,3vw,20px);
+    align-items:stretch;justify-content:center;
+  }
+  .person{
+    flex:1;min-width:0;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:clamp(10px,2.4vw,16px) clamp(8px,2vw,14px);
+    display:flex;flex-direction:column;gap:8px;
+    backdrop-filter:blur(6px);
+  }
+  .person input, .person select{
+    width:100%;
+    background:rgba(11,16,38,.6);
+    border:1px solid rgba(138,147,184,.25);
+    color:var(--cream);
+    font-family:'Montserrat',sans-serif;
+    font-size:clamp(.85rem,2.6vw,1rem);
+    padding:10px 12px;
+    border-radius:10px;
+    text-align:center;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .person input::placeholder{color:var(--muted)}
+  .person select{appearance:none;cursor:pointer}
+  .person select:focus, .person input:focus{
+    outline:none;border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(212,166,75,.18);
+  }
+  .person.miss select{border-color:var(--rose);box-shadow:0 0 0 3px rgba(201,123,132,.22)}
+
+  /* dial + glyphs */
+  .stage{
+    display:flex;align-items:center;justify-content:center;
+    gap:clamp(4px,2vw,18px);
+    min-height:clamp(220px,42vh,320px);
+  }
+  .glyph{
+    font-size:clamp(2.2rem,10vw,3.6rem);
+    line-height:1;
+    color:var(--muted);
+    opacity:.35;
+    transition:opacity .6s ease, color .6s ease, transform .6s ease;
+    flex:0 0 auto;
+    text-shadow:0 0 18px currentColor;
+  }
+  .glyph.on{opacity:1;animation:float 4s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+  .dial{position:relative;width:clamp(190px,54vw,260px);aspect-ratio:1;flex:0 0 auto}
+  .dial svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .track{fill:none;stroke:var(--ring-track);stroke-width:6}
+  .prog{fill:none;stroke:url(#goldgrad);stroke-width:7;stroke-linecap:round;
+    stroke-dasharray:534;stroke-dashoffset:534;
+    filter:drop-shadow(0 0 6px rgba(212,166,75,.6));}
+  .ticks line{stroke:rgba(212,166,75,.35);stroke-width:1.4}
+  .readout{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2px;
+  }
+  .pct{
+    font-family:'Cinzel',serif;font-weight:700;
+    font-size:clamp(2.6rem,13vw,4.2rem);
+    color:var(--gold-bright);
+    line-height:1;
+    text-shadow:0 0 30px rgba(212,166,75,.35);
+  }
+  .pct .u{font-size:.42em;color:var(--gold);vertical-align:.55em;margin-left:.04em}
+  .pct.idle{color:var(--muted);opacity:.5}
+  .tagline{
+    font-family:'Cinzel',serif;
+    font-size:clamp(.78rem,3vw,1.02rem);
+    letter-spacing:.14em;
+    color:var(--rose);
+    opacity:0;transition:opacity .6s ease .2s;
+    min-height:1.2em;
+  }
+  .tagline.show{opacity:1}
+  .names{
+    font-size:clamp(.72rem,2.6vw,.9rem);
+    letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);min-height:1.2em;
+  }
+  .names b{color:var(--cream);font-weight:500}
+  .names .sep{color:var(--rose);margin:0 .5em}
+
+  /* controls */
+  .controls{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .btn{
+    font-family:'Cinzel',serif;
+    letter-spacing:.14em;
+    font-size:clamp(.82rem,2.6vw,.98rem);
+    padding:13px 30px;border-radius:999px;cursor:pointer;
+    border:1px solid var(--gold);
+    background:linear-gradient(180deg,rgba(212,166,75,.22),rgba(212,166,75,.08));
+    color:var(--gold-bright);
+    transition:transform .15s ease, box-shadow .25s ease, background .25s ease;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(212,166,75,.25);background:linear-gradient(180deg,rgba(212,166,75,.34),rgba(212,166,75,.12))}
+  .btn:active{transform:translateY(0)}
+  .btn:focus-visible{outline:2px solid var(--gold-bright);outline-offset:3px}
+  .btn.ghost{border-color:rgba(138,147,184,.4);background:transparent;color:var(--muted);letter-spacing:.1em}
+  .btn.ghost:hover{color:var(--cream);box-shadow:none}
+
+  .hint{font-size:.72rem;color:var(--rose);letter-spacing:.08em;min-height:1em;opacity:0;transition:opacity .3s}
+  .hint.show{opacity:1}
+
+  .fraseToggle{
+    position:fixed;top:14px;right:16px;z-index:3;
+    display:flex;align-items:center;gap:7px;
+    font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+    cursor:pointer;user-select:none;
+  }
+  .fraseToggle .dot{width:34px;height:18px;border-radius:999px;background:rgba(138,147,184,.25);position:relative;transition:background .25s}
+  .fraseToggle .dot::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--muted);transition:transform .25s, background .25s}
+  .fraseToggle.on .dot{background:rgba(212,166,75,.35)}
+  .fraseToggle.on .dot::after{transform:translateX(16px);background:var(--gold-bright)}
+
+  @media (prefers-reduced-motion:reduce){
+    .glyph.on{animation:none}
+    .stars::after{animation:none}
+  }
+</style>
+</head>
+<body>
+  <div class="skyfade" aria-hidden="true"></div>
+  <div class="stars" aria-hidden="true"></div>
+
+  <div class="fraseToggle on" id="fraseToggle" role="switch" aria-checked="true" tabindex="0">
+    <span>Frase</span><span class="dot"></span>
+  </div>
+
+  <main class="card">
+    <div class="eyebrow">CASA SELYMNA</div>
+    <h1 class="title">Compatibilidad<span class="amp">— DEL AMOR —</span></h1>
+
+    <div class="duo">
+      <div class="person" id="p1">
+        <input id="name1" type="text" placeholder="Nombre" autocomplete="off" spellcheck="false" maxlength="14" aria-label="Nombre de la primera persona">
+        <select id="sign1" aria-label="Signo de la primera persona"><option value="">Signo</option></select>
+      </div>
+      <div class="person" id="p2">
+        <input id="name2" type="text" placeholder="Nombre" autocomplete="off" spellcheck="false" maxlength="14" aria-label="Nombre de la segunda persona">
+        <select id="sign2" aria-label="Signo de la segunda persona"><option value="">Signo</option></select>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="glyph" id="g1">✦</div>
+      <div class="dial">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <defs>
+            <linearGradient id="goldgrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#F4E0A8"/>
+              <stop offset="1" stop-color="#D4A64B"/>
+            </linearGradient>
+          </defs>
+          <circle class="track" cx="100" cy="100" r="85"/>
+          <g class="ticks" id="ticks"></g>
+          <circle class="prog" id="prog" cx="100" cy="100" r="85"/>
+        </svg>
+        <div class="readout">
+          <div class="pct idle" id="pct">✦</div>
+          <div class="tagline" id="tagline"></div>
+        </div>
+      </div>
+      <div class="glyph" id="g2">✦</div>
+    </div>
+
+    <div class="names" id="names">&nbsp;</div>
+
+    <div class="controls">
+      <button class="btn" id="calc">Calcular ✦</button>
+      <button class="btn ghost" id="reset">Reiniciar</button>
+    </div>
+    <div class="hint" id="hint">Elige los dos signos</div>
+  </main>
+
+<script>
+(function(){
+  const SIGNS = [
+    {es:"Aries",g:"♈",el:"fuego"},
+    {es:"Tauro",g:"♉",el:"tierra"},
+    {es:"Géminis",g:"♊",el:"aire"},
+    {es:"Cáncer",g:"♋",el:"agua"},
+    {es:"Leo",g:"♌",el:"fuego"},
+    {es:"Virgo",g:"♍",el:"tierra"},
+    {es:"Libra",g:"♎",el:"aire"},
+    {es:"Escorpio",g:"♏",el:"agua"},
+    {es:"Sagitario",g:"♐",el:"fuego"},
+    {es:"Capricornio",g:"♑",el:"tierra"},
+    {es:"Acuario",g:"♒",el:"aire"},
+    {es:"Piscis",g:"♓",el:"agua"}
+  ];
+  const ELCOLOR = {fuego:"#E0A15A",tierra:"#9FB07A",aire:"#A9C4E8",agua:"#7FB9C4"};
+
+  // Tabla R — puntaje exacto Sol×Sol del Códice de Casa Selymna (Nivel I original)
+  const R = {
+    "0-0":78,"1-1":80,"2-2":72,"3-3":76,"4-4":74,"5-5":75,
+    "6-6":77,"7-7":79,"8-8":78,"9-9":76,"10-10":75,"11-11":74,
+    "0-1":58,"0-2":84,"0-3":56,"0-4":90,"0-5":48,"0-6":82,
+    "0-7":60,"0-8":91,"0-9":57,"0-10":85,"0-11":54,
+    "1-2":52,"1-3":87,"1-4":60,"1-5":89,"1-6":55,"1-7":83,
+    "1-8":50,"1-9":90,"1-10":53,"1-11":86,
+    "2-3":53,"2-4":85,"2-5":58,"2-6":89,"2-7":47,"2-8":82,
+    "2-9":46,"2-10":90,"2-11":54,
+    "3-4":56,"3-5":84,"3-6":55,"3-7":91,"3-8":48,"3-9":84,
+    "3-10":46,"3-11":90,
+    "4-5":54,"4-6":86,"4-7":61,"4-8":91,"4-9":50,"4-10":83,"4-11":49,
+    "5-6":53,"5-7":85,"5-8":56,"5-9":89,"5-10":46,"5-11":81,
+    "6-7":54,"6-8":85,"6-9":55,"6-10":90,"6-11":50,
+    "7-8":53,"7-9":86,"7-10":54,"7-11":91,
+    "8-9":54,"8-10":86,"8-11":56,
+    "9-10":53,"9-11":84,
+    "10-11":52
+  };
+  const keyOf=(a,b)=>a<=b?a+"-"+b:b+"-"+a;
+  function score(a,b){ return R[keyOf(a,b)]; }
+
+  // Franjas y colores del Códice (mismos umbrales que tu app original)
+  function tagFor(s){
+    if(s>=82) return "Armonía";
+    if(s>=66) return "Magnetismo";
+    if(s>=58) return "Contraste";
+    return "Desafío";
+  }
+  function tierColor(s){
+    if(s>=82) return "#6fa893";   // jade  · Armonía
+    if(s>=66) return "#C9A24B";   // oro   · Magnetismo
+    if(s>=58) return "#9B7FB8";   // amatista · Contraste
+    return "#C2674A";             // óxido · Desafío
+  }
+
+  // populate selects
+  const sel1=document.getElementById('sign1'), sel2=document.getElementById('sign2');
+  SIGNS.forEach((s,i)=>{
+    const o1=document.createElement('option');o1.value=i;o1.textContent=`${s.g}  ${s.es}`;sel1.appendChild(o1);
+    const o2=o1.cloneNode(true);sel2.appendChild(o2);
+  });
+
+  const g1=document.getElementById('g1'), g2=document.getElementById('g2');
+  const pct=document.getElementById('pct'), tagline=document.getElementById('tagline');
+  const names=document.getElementById('names'), hint=document.getElementById('hint');
+  const prog=document.getElementById('prog');
+  const p1=document.getElementById('p1'), p2=document.getElementById('p2');
+  const CIRC=534; // ~2*pi*85
+
+  // decorative ticks
+  const ticks=document.getElementById('ticks');
+  for(let i=0;i<48;i++){
+    const ang=(i/48)*Math.PI*2;
+    const inner = i%4===0?76:80;
+    const x1=100+Math.cos(ang)*inner, y1=100+Math.sin(ang)*inner;
+    const x2=100+Math.cos(ang)*72, y2=100+Math.sin(ang)*72;
+    const l=document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("x1",x1);l.setAttribute("y1",y1);l.setAttribute("x2",x2);l.setAttribute("y2",y2);
+    ticks.appendChild(l);
+  }
+
+  function paintGlyph(el,idx){
+    if(idx===""){el.textContent="✦";el.style.color="";el.classList.remove('on');return;}
+    const s=SIGNS[idx];
+    el.textContent=s.g;
+    el.style.color=ELCOLOR[s.el];
+    el.classList.add('on');
+  }
+  sel1.addEventListener('change',()=>{paintGlyph(g1,sel1.value);p1.classList.remove('miss');hint.classList.remove('show')});
+  sel2.addEventListener('change',()=>{paintGlyph(g2,sel2.value);p2.classList.remove('miss');hint.classList.remove('show')});
+
+  let animId=null;
+  const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function reveal(target){
+    cancelAnimationFrame(animId);
+    tagline.classList.remove('show');
+    pct.classList.remove('idle');
+    const col=tierColor(target);
+    pct.style.color=col;
+    prog.style.stroke=col;
+    tagline.style.color=col;
+    const dur = reduce?0:1900;
+    const start=performance.now();
+    function frame(now){
+      let t=dur===0?1:Math.min(1,(now-start)/dur);
+      const e=1-Math.pow(1-t,3); // ease-out cubic
+      const val=Math.round(e*target);
+      pct.innerHTML = val+'<span class="u">%</span>';
+      prog.style.strokeDashoffset = CIRC - (CIRC*e*target/100);
+      if(t<1){animId=requestAnimationFrame(frame);}
+      else{
+        pct.innerHTML = target+'<span class="u">%</span>';
+        if(document.getElementById('fraseToggle').classList.contains('on')){
+          tagline.textContent=tagFor(target);
+          tagline.classList.add('show');
+        }
+      }
+    }
+    animId=requestAnimationFrame(frame);
+  }
+
+  function nameLabel(){
+    const n1=document.getElementById('name1').value.trim();
+    const n2=document.getElementById('name2').value.trim();
+    const a=n1||SIGNS[sel1.value].es;
+    const b=n2||SIGNS[sel2.value].es;
+    names.innerHTML=`<b>${escapeHtml(a)}</b><span class="sep">✦</span><b>${escapeHtml(b)}</b>`;
+  }
+  function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+  function calculate(){
+    if(sel1.value===""||sel2.value===""){
+      if(sel1.value==="")p1.classList.add('miss');
+      if(sel2.value==="")p2.classList.add('miss');
+      hint.classList.add('show');
+      return;
+    }
+    hint.classList.remove('show');
+    nameLabel();
+    reveal(score(+sel1.value,+sel2.value));
+  }
+
+  function reset(){
+    cancelAnimationFrame(animId);
+    sel1.value="";sel2.value="";
+    document.getElementById('name1').value="";
+    document.getElementById('name2').value="";
+    paintGlyph(g1,"");paintGlyph(g2,"");
+    pct.innerHTML="✦";pct.classList.add('idle');pct.style.color="";
+    prog.style.strokeDashoffset=CIRC;prog.style.stroke="";
+    tagline.classList.remove('show');tagline.textContent="";tagline.style.color="";
+    names.innerHTML="&nbsp;";
+    p1.classList.remove('miss');p2.classList.remove('miss');hint.classList.remove('show');
+    sel1.focus();
+  }
+
+  document.getElementById('calc').addEventListener('click',calculate);
+  document.getElementById('reset').addEventListener('click',reset);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();calculate();}
+    if(e.key==='Escape'){reset();}
+  });
+
+  // frase toggle
+  const ft=document.getElementById('fraseToggle');
+  function toggleFrase(){
+    const on=ft.classList.toggle('on');
+    ft.setAttribute('aria-checked',on);
+    if(!on)tagline.classList.remove('show');
+    else if(sel1.value!==""&&sel2.value!==""&&!pct.classList.contains('idle')){
+      const sc=score(+sel1.value,+sel2.value);
+      tagline.textContent=tagFor(sc);tagline.style.color=tierColor(sc);tagline.classList.add('show');
+    }
+  }
+  ft.addEventListener('click',toggleFrase);
+  ft.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleFrase();}});
+})();
+</script>
+</body>
+</html>
+
