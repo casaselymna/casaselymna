@@ -214,179 +214,193 @@ function calcular(y,mo,d,hora,tz){
 }
 </script>
 <script>
-const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-const PAISES=[
-  ["Argentina","America/Argentina/Buenos_Aires"],["Bolivia","America/La_Paz"],
-  ["Brasil (Brasilia, São Paulo, Río)","America/Sao_Paulo"],["Brasil (Manaos)","America/Manaus"],
-  ["Chile","America/Santiago"],["Colombia","America/Bogota"],["Costa Rica","America/Costa_Rica"],
-  ["Canadá (Toronto, Montreal)","America/Toronto"],["Cuba","America/Havana"],["Ecuador","America/Guayaquil"],["El Salvador","America/El_Salvador"],
-  ["Alemania","Europe/Berlin"],["España","Europe/Madrid"],
-  ["Estados Unidos (Este: Nueva York, Miami)","America/New_York"],["Estados Unidos (Centro: Chicago, Texas)","America/Chicago"],
-  ["Estados Unidos (Montaña: Denver)","America/Denver"],["Estados Unidos (Arizona)","America/Phoenix"],
-  ["Estados Unidos (Pacífico: Los Ángeles)","America/Los_Angeles"],
-  ["Francia","Europe/Paris"],["Guatemala","America/Guatemala"],["Honduras","America/Tegucigalpa"],
-  ["México (Centro: CDMX, Guadalajara, Monterrey)","America/Mexico_City"],["México (Quintana Roo: Cancún)","America/Cancun"],
-  ["México (Sinaloa, Nayarit, Baja California Sur)","America/Mazatlan"],["México (Chihuahua)","America/Chihuahua"],
-  ["México (Sonora)","America/Hermosillo"],["México (Baja California: Tijuana)","America/Tijuana"],
-  ["Italia","Europe/Rome"],["Nicaragua","America/Managua"],["Panamá","America/Panama"],["Paraguay","America/Asuncion"],
-  ["Perú","America/Lima"],["Portugal","Europe/Lisbon"],["Puerto Rico","America/Puerto_Rico"],["Reino Unido","Europe/London"],["República Dominicana","America/Santo_Domingo"],["Suiza","Europe/Zurich"],
-  ["Uruguay","America/Montevideo"],["Venezuela","America/Caracas"]
-];
-const GLIFO={venus:"♀︎",marte:"♂︎",lilith:"⚸︎",sol:"☉︎",luna:"☽︎"};
-const NOMBRE={venus:"Venus",marte:"Marte",lilith:"Lilith",sol:"Sol",luna:"Luna"};
-const $=id=>document.getElementById(id);
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
-
-(function initForm(){
-  const dia=("dia"),mes=("mes"),anio=("anio"),pais=("pais");
-  dia.innerHTML='<option value="">Día</option>'+Array.from({length:31},(_,i)=>`<option value="i+1">{i+1}</option>`).join("");
-  mes.innerHTML='<option value="">Mes</option>'+MESES.map((m,i)=>`<option value="i+1">{m}</option>`).join("");
-  let ys='<option value="">Año</option>'; for(let y=2015;y>=1930;y--) ys+=`<option value="y">{y}</option>`; anio.innerHTML=ys;
-  const pad=n=>String(n).padStart(2,"0");
-  ("hora").innerHTML='<optionvalue="">Nolasé</option>'+Array.from(length:24,(,i)=>`<optionvalue="{i}">${pad(i)} h</option>`).join("");
-  ("minuto").innerHTML='<optionvalue="">Min</option>'+Array.from(length:60,(,i)=>`<optionvalue="{i}">${pad(i)} min</option>`).join("");
-  pais.innerHTML='<option value="">Elige un país</option>'+[...PAISES].sort((x,y)=>x[0].localeCompare(y[0],"es")).map(([n,z])=>`<option value="z">{esc(n)}</option>`).join("");
-})();
-
-let estado=null;
-
-function leerForm(){
-  const d=+("dia").value,mo=+("mes").value,y=+("anio").value,paisV=("pais").value;
-  if(!d||!mo||!y) return {error:"Completa el día, el mes y el año de nacimiento."};
-  const fecha=new Date(Date.UTC(y,mo-1,d));
-  if(fecha.getUTCDate()!==d) return {error:`El ${d} de ${MESES[mo-1]} de ${y} no existe. Revisa la fecha.`};
-  if(!paisV) return {error:"Elige su país de nacimiento (o el país donde creció)."};
-  const tz=paisV;
-  const hv=("hora").value,mv=("minuto").value;
-  if(hv===""&&mv!=="") return {error:"Elige también la hora, o deja los minutos vacíos."};
-  const hora=hv===""?null:[+hv,mv===""?0:+mv];
-  const paisN=PAISES.find(p=>p[1]===paisV)[0];
-  return {nombre:$("nombre").value.trim(),d,mo,y,tz,hora,paisN};
+const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const PAISES = [["Argentina", "America/Argentina/Buenos_Aires"], ["Bolivia", "America/La_Paz"], ["Brasil (Brasilia, São Paulo, Río)", "America/Sao_Paulo"], ["Brasil (Manaos)", "America/Manaus"], ["Chile", "America/Santiago"], ["Colombia", "America/Bogota"], ["Costa Rica", "America/Costa_Rica"], ["Canadá (Toronto, Montreal)", "America/Toronto"], ["Cuba", "America/Havana"], ["Ecuador", "America/Guayaquil"], ["El Salvador", "America/El_Salvador"], ["Alemania", "Europe/Berlin"], ["España", "Europe/Madrid"], ["Estados Unidos (Este: Nueva York, Miami)", "America/New_York"], ["Estados Unidos (Centro: Chicago, Texas)", "America/Chicago"], ["Estados Unidos (Montaña: Denver)", "America/Denver"], ["Estados Unidos (Arizona)", "America/Phoenix"], ["Estados Unidos (Pacífico: Los Ángeles)", "America/Los_Angeles"], ["Francia", "Europe/Paris"], ["Guatemala", "America/Guatemala"], ["Honduras", "America/Tegucigalpa"], ["México (Centro: CDMX, Guadalajara, Monterrey)", "America/Mexico_City"], ["México (Quintana Roo: Cancún)", "America/Cancun"], ["México (Sinaloa, Nayarit, Baja California Sur)", "America/Mazatlan"], ["México (Chihuahua)", "America/Chihuahua"], ["México (Sonora)", "America/Hermosillo"], ["México (Baja California: Tijuana)", "America/Tijuana"], ["Italia", "Europe/Rome"], ["Nicaragua", "America/Managua"], ["Panamá", "America/Panama"], ["Paraguay", "America/Asuncion"], ["Perú", "America/Lima"], ["Portugal", "Europe/Lisbon"], ["Puerto Rico", "America/Puerto_Rico"], ["Reino Unido", "Europe/London"], ["República Dominicana", "America/Santo_Domingo"], ["Suiza", "Europe/Zurich"], ["Uruguay", "America/Montevideo"], ["Venezuela", "America/Caracas"]];
+const GLIFO = {
+  venus: "♀︎",
+  marte: "♂︎",
+  lilith: "⚸︎",
+  sol: "☉︎",
+  luna: "☽︎"
+};
+const NOMBRE = {
+  venus: "Venus",
+  marte: "Marte",
+  lilith: "Lilith",
+  sol: "Sol",
+  luna: "Luna"
+};
+const el = id => document.getElementById(id);
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;"
+  })[c]);
 }
-
-function revelar(datos){
-  const r=calcular(datos.y,datos.mo,datos.d,datos.hora,datos.tz);
-  const elegido={};
-  for(const k of CUERPOS){ elegido[k]= r[k].opciones.length===1 ? r[k].opciones[0] : (k==="luna" ? null : r[k].opciones[r[k].probable]); }
-  estado={datos,r,elegido,tab:(estado&&estado.tab)||"m1"};
+(function initForm() {
+  const dia = el("dia"),
+    mes = el("mes"),
+    anio = el("anio"),
+    pais = el("pais");
+  dia.innerHTML = '<option value="">Día</option>' + Array.from({
+    length: 31
+  }, (_, i) => "<option value=\"" + (i + 1) + "\">" + (i + 1) + "</option>").join("");
+  mes.innerHTML = '<option value="">Mes</option>' + MESES.map((m, i) => "<option value=\"" + (i + 1) + "\">" + m + "</option>").join("");
+  let ys = '<option value="">Año</option>';
+  for (let y = 2015; y >= 1930; y--) ys += "<option value=\"" + y + "\">" + y + "</option>";
+  anio.innerHTML = ys;
+  const pad = n => String(n).padStart(2, "0");
+  el("hora").innerHTML = '<option value="">No la sé</option>' + Array.from({
+    length: 24
+  }, (_, i) => "<option value=\"" + i + "\">" + pad(i) + " h</option>").join("");
+  el("minuto").innerHTML = '<option value="">Min</option>' + Array.from({
+    length: 60
+  }, (_, i) => "<option value=\"" + i + "\">" + pad(i) + " min</option>").join("");
+  pais.innerHTML = '<option value="">Elige un país</option>' + [...PAISES].sort((x, y) => x[0].localeCompare(y[0], "es")).map(([n, z]) => "<option value=\"" + z + "\">" + esc(n) + "</option>").join("");
+})();
+let estado = null;
+function leerForm() {
+  const d = +el("dia").value,
+    mo = +el("mes").value,
+    y = +el("anio").value,
+    paisV = el("pais").value;
+  if (!d || !mo || !y) return {
+    error: "Completa el día, el mes y el año de nacimiento."
+  };
+  const fecha = new Date(Date.UTC(y, mo - 1, d));
+  if (fecha.getUTCDate() !== d) return {
+    error: "El " + d + " de " + MESES[mo - 1] + " de " + y + " no existe. Revisa la fecha."
+  };
+  if (!paisV) return {
+    error: "Elige su país de nacimiento (o el país donde creció)."
+  };
+  const tz = paisV;
+  const hv = el("hora").value,
+    mv = el("minuto").value;
+  if (hv === "" && mv !== "") return {
+    error: "Elige también la hora, o deja los minutos vacíos."
+  };
+  const hora = hv === "" ? null : [+hv, mv === "" ? 0 : +mv];
+  const paisN = PAISES.find(p => p[1] === paisV)[0];
+  return {
+    nombre: el("nombre").value.trim(),
+    d,
+    mo,
+    y,
+    tz,
+    hora,
+    paisN
+  };
+}
+function revelar(datos) {
+  const r = calcular(datos.y, datos.mo, datos.d, datos.hora, datos.tz);
+  const elegido = {};
+  for (const k of CUERPOS) {
+    elegido[k] = r[k].opciones.length === 1 ? r[k].opciones[0] : k === "luna" ? null : r[k].opciones[r[k].probable];
+  }
+  estado = {
+    datos,
+    r,
+    elegido,
+    tab: estado && estado.tab || "m1"
+  };
   pintar();
 }
-
-function signo(k){const s=estado.elegido[k]; return s===null?null:s;}
-function nombreSigno(k){
-  const o=estado.r[k].opciones; const s=signo(k);
-  if(s!==null) return SIGNOS[s];
-  return o.map(x=>SIGNOS[x]).join(" o ");
+function signo(k) {
+  const s = estado.elegido[k];
+  return s === null ? null : s;
 }
-function quien(){return estado.datos.nombre||"esa persona";}
-
-function bloquePeso(p){return `<div class="weight"><span>Peso en este módulo</span><span class="bar"><i style="width:p%"></i></span><span>{p} %</span></div>`;}
-function selector(k){
-  const o=estado.r[k].opciones; if(o.length<2) return "";
-  if(k==="luna"){
-    const yang=o.find(s=>s%2===0), yin=o.find(s=>s%2===1);
-    return `<div class="choose">
-      <p>Sin la hora exacta, su Luna puede estar en <b>SIGNOS[o[0]]</b>oen<b>{SIGNOS[o[1]]}</b>. Haz el test: observa a ${esc(quien())} en un mal día.</p>
-      <div class="test">
-        <button type="button" data-luna="${yang}">Necesita moverse, hablar, salir, distraerse<span>Su Luna es SIGNOS[yang]({elemento(yang)})</span></button>
-        <button type="button" data-luna="${yin}">Necesita refugio, silencio, comida, contacto, su cama<span>Su Luna es SIGNOS[yin]({elemento(yin)})</span></button>
-      </div>
-      ${signo("luna")!==null?`<p class="note">Elegiste Luna en ${SIGNOS[signo("luna")]}. Puedes cambiar tu respuesta.</p>`:""}
-    </div>`;
+function nombreSigno(k) {
+  const o = estado.r[k].opciones;
+  const s = signo(k);
+  if (s !== null) return SIGNOS[s];
+  return o.map(x => SIGNOS[x]).join(" o ");
+}
+function quien() {
+  return estado.datos.nombre || "esa persona";
+}
+function bloquePeso(p) {
+  return "<div class=\"weight\"><span>Peso en este módulo</span><span class=\"bar\"><i style=\"width:" + p + "%\"></i></span><span>" + p + " %</span></div>";
+}
+function selector(k) {
+  const o = estado.r[k].opciones;
+  if (o.length < 2) return "";
+  if (k === "luna") {
+    const yang = o.find(s => s % 2 === 0),
+      yin = o.find(s => s % 2 === 1);
+    return "<div class=\"choose\">\n      <p>Sin la hora exacta, su Luna puede estar en <b>" + SIGNOS[o[0]] + "</b> o en <b>" + SIGNOS[o[1]] + "</b>. Haz el test: observa a " + esc(quien()) + " en un mal día.</p>\n      <div class=\"test\">\n        <button type=\"button\" data-luna=\"" + yang + "\">Necesita moverse, hablar, salir, distraerse<span>Su Luna es " + SIGNOS[yang] + " (" + elemento(yang) + ")</span></button>\n        <button type=\"button\" data-luna=\"" + yin + "\">Necesita refugio, silencio, comida, contacto, su cama<span>Su Luna es " + SIGNOS[yin] + " (" + elemento(yin) + ")</span></button>\n      </div>\n      " + (signo("luna") !== null ? "<p class=\"note\">Elegiste Luna en " + SIGNOS[signo("luna")] + ". Puedes cambiar tu respuesta.</p>" : "") + "\n    </div>";
   }
-  return `<div class="choose">
-    <p>Nació el día en que ${NOMBRE[k]} cambiaba de signo. Sin la hora exacta puede ser ${SIGNOS[o[0]]} o ${SIGNOS[o[1]]}. Lee los dos y quédate con el que más se le parece.</p>
-    <div class="seg" role="group" aria-label="Signo de NOMBRE[k]">{o.map(s=>`<button type="button" data-k="k"data-s="{s}" aria-pressed="signo(k)===s">{SIGNOS[s]}</button>`).join("")}</div>
-  </div>`;
+  return "<div class=\"choose\">\n    <p>Nació el día en que " + NOMBRE[k] + " cambiaba de signo. Sin la hora exacta puede ser " + SIGNOS[o[0]] + " o " + SIGNOS[o[1]] + ". Lee los dos y quédate con el que más se le parece.</p>\n    <div class=\"seg\" role=\"group\" aria-label=\"Signo de " + NOMBRE[k] + "\">" + o.map(s => "<button type=\"button\" data-k=\"" + k + "\" data-s=\"" + s + "\" aria-pressed=\"" + (signo(k) === s) + "\">" + SIGNOS[s] + "</button>").join("") + "</div>\n  </div>";
 }
-function tarjeta(k,etiqueta,peso,filas,extra){
-  const s=signo(k);
-  const cuerpo = s===null ? `<p class="note">Responde el test de arriba para ver su ${NOMBRE[k]}.</p>` :
-    `<dl>${filas(s).map(([dt,dd])=>`<div><dt>${dt}</dt><dd>${esc(dd)}</dd></div>`).join("")}</dl>${extra?`<p class="note">${extra(s)}</p>`:""}`;
-  return `<article class="key" style="--c:var(--${k})">
-    <div class="key-head"><span class="glyph" aria-hidden="true">${GLIFO[k]}</span>
-      <div><p class="key-name">etiqueta</p><h3>{NOMBRE[k]} en ${nombreSigno(k)}</h3></div>
-      ${bloquePeso(peso)}</div>
-    selector(k){cuerpo}</article>`;
+function tarjeta(k, etiqueta, peso, filas, extra) {
+  const s = signo(k);
+  const cuerpo = s === null ? "<p class=\"note\">Responde el test de arriba para ver su " + NOMBRE[k] + ".</p>" : "<dl>" + filas(s).map(([dt, dd]) => "<div><dt>" + dt + "</dt><dd>" + esc(dd) + "</dd></div>").join("") + "</dl>" + (extra ? "<p class=\"note\">" + extra(s) + "</p>" : "");
+  return "<article class=\"key\" style=\"--c:var(--" + k + ")\">\n    <div class=\"key-head\"><span class=\"glyph\" aria-hidden=\"true\">" + GLIFO[k] + "</span>\n      <div><p class=\"key-name\">" + etiqueta + "</p><h3>" + NOMBRE[k] + " en " + nombreSigno(k) + "</h3></div>\n      " + bloquePeso(peso) + "</div>\n    " + selector(k) + cuerpo + "</article>";
 }
-
-function panelM1(){
-  const v=signo("venus"), sol=signo("sol"), ma=signo("marte"), li=signo("lilith");
-  const doctrina = sol!==v
-    ? `Su Sol está en ${SIGNOS[sol]}, pero se enamora con su Venus en ${SIGNOS[v]}. Todo el mundo le habla a su Sol. Tú háblale a su Venus.`
-    : `Su Sol y su Venus están en ${SIGNOS[v]}: lo que muestra es justo lo que le atrae. Aun así, empieza por su Venus.`;
-  return `<p class="doctrine">${doctrina}</p>
-  ${tarjeta("venus","Llave 1 · Atraer",50,s=>[["Le atrae",C.venus[s].atrae],["Haz esto",C.venus[s].haz],["Nunca hagas esto",C.venus[s].nunca],["Su cita ideal",C.venus[s].cita]])}
-  ${tarjeta("marte","Llave 2 · Encender",25,s=>[["Regla de su elemento",C.marteElem[elemento(s)]],["Su ritmo",C.marte[s].ritmo],["Lo que le enciende",C.marte[s].enciende],["Lo que le apaga",C.marte[s].apaga]])}
-  ${tarjeta("lilith","Llave 3 · Conquistar",15,s=>[["Su deseo secreto",C.lilith[s].deseo],["Cómo dárselo",C.lilith[s].dar]],()=>"Lilith se da, no se dice. Nunca le digas «sé lo que deseas en secreto».")}
-  ${tarjeta("sol","Llave 4 · El elogio exacto",10,s=>[["Lo que debes admirar",C.sol[s].admira],["Frase lista para usar",C.sol[s].frase],["Nunca critiques",C.sol[s].nunca]],()=>"Úsala una sola vez, en la semana 3. Repetida, pierde su poder.")}
-  <section class="plan" aria-label="Plan de conquista">
-    <h3>Su plan de conquista en 3 semanas</h3>
-    <ol>
-      <li><strong>Semana 1 · Atraer</strong><span>${esc(C.venus[v].haz)}. Propón: ${esc(C.venus[v].cita.charAt(0).toLowerCase()+C.venus[v].cita.slice(1))}.</span></li>
-      <li><strong>Semana 2 · Encender</strong><span>${esc(C.marteElem[elemento(ma)])} ${esc(C.marte[ma].ritmo)}.</span></li>
-      <li><strong>Semana 3 · Conquistar</strong><span>${esc(C.lilith[li].dar)}. Y una sola vez: ${esc(C.sol[sol].frase)}</span></li>
-    </ol>
-  </section>`;
+function panelM1() {
+  const v = signo("venus"),
+    sol = signo("sol"),
+    ma = signo("marte"),
+    li = signo("lilith");
+  const doctrina = sol !== v ? "Su Sol está en " + SIGNOS[sol] + ", pero se enamora con su Venus en " + SIGNOS[v] + ". Todo el mundo le habla a su Sol. Tú háblale a su Venus." : "Su Sol y su Venus están en " + SIGNOS[v] + ": lo que muestra es justo lo que le atrae. Aun así, empieza por su Venus.";
+  return "<p class=\"doctrine\">" + doctrina + "</p>\n  " + tarjeta("venus", "Llave 1 · Atraer", 50, s => [["Le atrae", C.venus[s].atrae], ["Haz esto", C.venus[s].haz], ["Nunca hagas esto", C.venus[s].nunca], ["Su cita ideal", C.venus[s].cita]]) + "\n  " + tarjeta("marte", "Llave 2 · Encender", 25, s => [["Regla de su elemento", C.marteElem[elemento(s)]], ["Su ritmo", C.marte[s].ritmo], ["Lo que le enciende", C.marte[s].enciende], ["Lo que le apaga", C.marte[s].apaga]]) + "\n  " + tarjeta("lilith", "Llave 3 · Conquistar", 15, s => [["Su deseo secreto", C.lilith[s].deseo], ["Cómo dárselo", C.lilith[s].dar]], () => "Lilith se da, no se dice. Nunca le digas «sé lo que deseas en secreto».") + "\n  " + tarjeta("sol", "Llave 4 · El elogio exacto", 10, s => [["Lo que debes admirar", C.sol[s].admira], ["Frase lista para usar", C.sol[s].frase], ["Nunca critiques", C.sol[s].nunca]], () => "Úsala una sola vez, en la semana 3. Repetida, pierde su poder.") + "\n  <section class=\"plan\" aria-label=\"Plan de conquista\">\n    <h3>Su plan de conquista en 3 semanas</h3>\n    <ol>\n      <li><strong>Semana 1 · Atraer</strong><span>" + esc(C.venus[v].haz) + ". Propón: " + esc(C.venus[v].cita.charAt(0).toLowerCase() + C.venus[v].cita.slice(1)) + ".</span></li>\n      <li><strong>Semana 2 · Encender</strong><span>" + esc(C.marteElem[elemento(ma)]) + " " + esc(C.marte[ma].ritmo) + ".</span></li>\n      <li><strong>Semana 3 · Conquistar</strong><span>" + esc(C.lilith[li].dar) + ". Y una sola vez: " + esc(C.sol[sol].frase) + "</span></li>\n    </ol>\n  </section>";
 }
-
-function panelM2(){
-  const lu=signo("luna"), v=signo("venus"), ma=signo("marte");
-  const rutina = `<section class="plan" aria-label="Rutina">
-    <h3>Su rutina Selymna</h3>
-    <ol>
-      <li><strong>Cada día · Luna</strong><span>${lu===null?"Haz el test de la Luna para ver su gesto diario.":esc(C.luna[lu].gesto)}</span></li>
-      <li><strong>Cada semana · Venus</strong><span>${esc(C.venusPareja[v].ritual)}</span></li>
-      <li><strong>Cada mes · Marte</strong><span>${esc(C.martePareja[ma].deseo)}</span></li>
-      <li><strong>Tras una pelea · Marte</strong><span>${esc(C.martePareja[ma].reconcilia)}. En menos de 24 horas.</span></li>
-    </ol>
-  </section>`;
-  const senal = lu===null ? "" : (()=>{const e=elemento(lu), x=C.senales[e]; return `<section class="plan" aria-label="Señal de alejamiento">
-    <h3>Si se está alejando</h3>
-    <ol>
-      <li><strong>La señal</strong><span>${esc(x.senal)} (Luna de ${e}).</span></li>
-      <li><strong>En 48 horas</strong><span>${esc(x.hacer)}.</span></li>
-    </ol></section>`;})();
-  return `<p class="doctrine">Se quedan donde su Luna come. La mitad de tu energía va a su Luna.</p>
-  ${tarjeta("luna","Llave 1 · Cada día",50,s=>[["Se siente en casa cuando…",C.luna[s].casa],["Tu gesto diario",C.luna[s].gesto],["Cómo darle consuelo",C.luna[s].consuelo],["Su Luna tiene hambre si…",C.luna[s].hambre]])}
-  ${tarjeta("venus","Llave 2 · Cada semana",30,s=>[["Se siente amado cuando…",C.venusPareja[s].amado],["Tu ritual semanal",C.venusPareja[s].ritual],["Señal de alarma",C.venusPareja[s].alarma]])}
-  ${tarjeta("marte","Llave 3 · Cada mes y tras cada pelea",20,s=>[["Cómo pelea",C.martePareja[s].pelea],["Cómo reconciliarse",C.martePareja[s].reconcilia],["Cómo mantener vivo el deseo",C.martePareja[s].deseo]])}
-  rutina{senal}`;
+function panelM2() {
+  const lu = signo("luna"),
+    v = signo("venus"),
+    ma = signo("marte");
+  const rutina = "<section class=\"plan\" aria-label=\"Rutina\">\n    <h3>Su rutina Selymna</h3>\n    <ol>\n      <li><strong>Cada día · Luna</strong><span>" + (lu === null ? "Haz el test de la Luna para ver su gesto diario." : esc(C.luna[lu].gesto)) + "</span></li>\n      <li><strong>Cada semana · Venus</strong><span>" + esc(C.venusPareja[v].ritual) + "</span></li>\n      <li><strong>Cada mes · Marte</strong><span>" + esc(C.martePareja[ma].deseo) + "</span></li>\n      <li><strong>Tras una pelea · Marte</strong><span>" + esc(C.martePareja[ma].reconcilia) + ". En menos de 24 horas.</span></li>\n    </ol>\n  </section>";
+  const senal = lu === null ? "" : (() => {
+    const e = elemento(lu),
+      x = C.senales[e];
+    return "<section class=\"plan\" aria-label=\"Señal de alejamiento\">\n    <h3>Si se está alejando</h3>\n    <ol>\n      <li><strong>La señal</strong><span>" + esc(x.senal) + " (Luna de " + e + ").</span></li>\n      <li><strong>En 48 horas</strong><span>" + esc(x.hacer) + ".</span></li>\n    </ol></section>";
+  })();
+  return "<p class=\"doctrine\">Se quedan donde su Luna come. La mitad de tu energía va a su Luna.</p>\n  " + tarjeta("luna", "Llave 1 · Cada día", 50, s => [["Se siente en casa cuando…", C.luna[s].casa], ["Tu gesto diario", C.luna[s].gesto], ["Cómo darle consuelo", C.luna[s].consuelo], ["Su Luna tiene hambre si…", C.luna[s].hambre]]) + "\n  " + tarjeta("venus", "Llave 2 · Cada semana", 30, s => [["Se siente amado cuando…", C.venusPareja[s].amado], ["Tu ritual semanal", C.venusPareja[s].ritual], ["Señal de alarma", C.venusPareja[s].alarma]]) + "\n  " + tarjeta("marte", "Llave 3 · Cada mes y tras cada pelea", 20, s => [["Cómo pelea", C.martePareja[s].pelea], ["Cómo reconciliarse", C.martePareja[s].reconcilia], ["Cómo mantener vivo el deseo", C.martePareja[s].deseo]]) + "\n  " + rutina + senal;
 }
-
-function pintar(){
-  const {datos,tab}=estado;
-  const chips=CUERPOS.map(k=>`<span class="chip" style="--c:var(--k)"><spanclass="glyph"aria-hidden="true">{GLIFO[k]}</span>NOMBRE[k]en<b>{nombreSigno(k)}</b></span>`).join("");
-  $("results").innerHTML=`
-    <div class="res-head">
-      <h2>Las llaves de ${esc(quien())}</h2>
-      <p class="note">${datos.d} de ${MESES[datos.mo-1]} de ${datos.y} · ${esc(datos.paisN)} · ${datos.hora?"con hora de nacimiento":"sin hora de nacimiento"}</p>
-      <div class="chips">${chips}</div>
-    </div>
-    <div class="tabs" role="tablist">
-      <button class="tab" role="tab" id="t-m1" aria-controls="p-m1" aria-selected="${tab==="m1"}" data-tab="m1">Módulo 1 · Seducir y conquistar</button>
-      <button class="tab" role="tab" id="t-m2" aria-controls="p-m2" aria-selected="${tab==="m2"}" data-tab="m2">Módulo 2 · Retener</button>
-    </div>
-    <div class="panel" role="tabpanel" id="p-m1" aria-labelledby="t-m1" tab==="m1"?"":"hidden">{panelM1()}</div>
-    <div class="panel" role="tabpanel" id="p-m2" aria-labelledby="t-m2" tab==="m2"?"":"hidden">{panelM2()}</div>`;
+function pintar() {
+  const {
+    datos,
+    tab
+  } = estado;
+  const chips = CUERPOS.map(k => "<span class=\"chip\" style=\"--c:var(--" + k + ")\"><span class=\"glyph\" aria-hidden=\"true\">" + GLIFO[k] + "</span>" + NOMBRE[k] + " en <b>" + nombreSigno(k) + "</b></span>").join("");
+  el("results").innerHTML = "\n    <div class=\"res-head\">\n      <h2>Las llaves de " + esc(quien()) + "</h2>\n      <p class=\"note\">" + datos.d + " de " + MESES[datos.mo - 1] + " de " + datos.y + " · " + esc(datos.paisN) + " · " + (datos.hora ? "con hora de nacimiento" : "sin hora de nacimiento") + "</p>\n      <div class=\"chips\">" + chips + "</div>\n    </div>\n    <div class=\"tabs\" role=\"tablist\">\n      <button class=\"tab\" role=\"tab\" id=\"t-m1\" aria-controls=\"p-m1\" aria-selected=\"" + (tab === "m1") + "\" data-tab=\"m1\">Módulo 1 · Seducir y conquistar</button>\n      <button class=\"tab\" role=\"tab\" id=\"t-m2\" aria-controls=\"p-m2\" aria-selected=\"" + (tab === "m2") + "\" data-tab=\"m2\">Módulo 2 · Retener</button>\n    </div>\n    <div class=\"panel\" role=\"tabpanel\" id=\"p-m1\" aria-labelledby=\"t-m1\" " + (tab === "m1" ? "" : "hidden") + ">" + panelM1() + "</div>\n    <div class=\"panel\" role=\"tabpanel\" id=\"p-m2\" aria-labelledby=\"t-m2\" " + (tab === "m2" ? "" : "hidden") + ">" + panelM2() + "</div>";
 }
-
-$("results").addEventListener("click",e=>{
-  const t=e.target.closest("button"); if(!t||!estado) return;
-  if(t.dataset.tab){estado.tab=t.dataset.tab; pintar(); $("t-"+estado.tab).focus(); return;}
-  if(t.dataset.luna!==undefined){estado.elegido.luna=+t.dataset.luna; pintar(); return;}
-  if(t.dataset.k){estado.elegido[t.dataset.k]=+t.dataset.s; pintar(); return;}
+el("results").addEventListener("click", e => {
+  const t = e.target.closest("button");
+  if (!t || !estado) return;
+  if (t.dataset.tab) {
+    estado.tab = t.dataset.tab;
+    pintar();
+    el("t-" + estado.tab).focus();
+    return;
+  }
+  if (t.dataset.luna !== undefined) {
+    estado.elegido.luna = +t.dataset.luna;
+    pintar();
+    return;
+  }
+  if (t.dataset.k) {
+    estado.elegido[t.dataset.k] = +t.dataset.s;
+    pintar();
+    return;
+  }
 });
-
-$("form").addEventListener("submit",e=>{
+el("form").addEventListener("submit", e => {
   e.preventDefault();
-  const datos=leerForm();
-  if(datos.error){$("error").textContent=datos.error; return;}
-  $("error").textContent="";
+  const datos = leerForm();
+  if (datos.error) {
+    el("error").textContent = datos.error;
+    return;
+  }
+  el("error").textContent = "";
   revelar(datos);
-  $("results").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+  el("results").scrollIntoView({
+    behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    block: "start"
+  });
 });
-
 </script>
 </body>
 </html>
